@@ -100,3 +100,7 @@ URxvt.keysym.M-Escape: perl:keyboard-select:activate
 URxvt.keysym.M-s: perl:keyboard-select:search
 
 URxvt.keyboard-select.clipboard: true
+
+! enable the extension (note that you must use an absolute path, no ~/...)
+urxvt*perl-lib: /home/user/.urxvt/ext/urxvt-vim-scrollback
+urxvt*perl-ext-common: vim-scrollback
