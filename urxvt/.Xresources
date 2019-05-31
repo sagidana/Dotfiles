@@ -1,0 +1,5 @@
+URxvt.transparent: true
+URxvt.shading:20
+
+! Included this so you know how to make your foreground not match the color of your background
+URxvt.foreground: #eeeeee
