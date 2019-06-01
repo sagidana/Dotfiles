@@ -55,6 +55,7 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; Adding runtime spell check with flycheck
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
