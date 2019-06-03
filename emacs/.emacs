@@ -21,45 +21,50 @@
 (package-initialize)
 
 ;; Evil-Mode
-(setq evil-want-C-w-delete nil evil-want-C-w-in-emacs-state t)
-(setq evil-want-C-u-scroll t)
-(require 'evil)
-(evil-mode t)
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode 1)
+
+  (use-package evil-leader
+    :ensure t
+    :config
+    (global-evil-leader-mode))
+
+  (use-package evil-surround
+    :ensure t
+    :config
+    (global-evil-surround-mode))
+
+  (use-package evil-indent-textobject
+    :ensure t))
 
 ;; Enable elpy (for python support!)
-(elpy-enable)
+(use-package elpy
+  :ensure t
+  :config
+  (elpy-enable)
+  )
 
 ;; Powerline
-(require 'powerline)
-(powerline-default-theme)
+(use-package powerline
+  :ensure t
+  :config
+  (powerline-default-theme)
+  )
 
-;; Org-mode
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
+;; Theme 
+(use-package spacemacs-common
+    :ensure spacemacs-theme
+    :config (load-theme 'spacemacs-dark t)
+  )
 
-;; Install packages (automatically generated)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (misterioso)))
- '(package-selected-packages
-   (quote
-    (flycheck evil-magit magit elpy spacemacs-theme powerline evil-visual-mark-mode))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
-;; Adding runtime spell check with flycheck
-(when (require 'flycheck nil t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
-
-;; Remap keybindings to make evil-mode and magit work side by side
-(require 'evil-magit)
-
+;; flycheck
+(use-package flycheck
+  :ensure t
+  :config
+  ;; Adding runtime spell check with flycheck
+  (when (require 'flycheck nil t)
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    (add-hook 'elpy-mode-hook 'flycheck-mode))
+  )
