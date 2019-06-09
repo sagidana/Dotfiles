@@ -39,6 +39,15 @@
 
     ;; Setting custom commands
     (evil-leader/set-key "r" 'ranger)
+    ;; Search in files
+    (evil-leader/set-key "sif" 'helm-do-ag-project-root)
+
+    ;; Go to definition
+    (evil-leader/set-key "gd" 'helm-cscope-find-global-definition-no-prompt)
+    ;; Cross-references
+    (evil-leader/set-key "x" 'helm-cscope-find-this-symbol-no-prompt)
+    ;; List all references inside current function
+    (evil-leader/set-key "X" 'helm-cscope-find-called-function-no-prompt)
   )
 
   (use-package evil-surround
@@ -53,16 +62,36 @@
  (use-package evil-indent-textobject
     :ensure t))
 
-;; Ranger into emacs!
+;; Ranger 
 (use-package ranger :ensure t
   :commands (ranger)
   :config
   (setq ranger-cleanup-eagerly t)
   )
 
+;; helm silver searcher
+(use-package helm-ag
+  :ensure t
+  :init
+  ;; Enable follow mode by default
+  (custom-set-variables '(helm-follow-mode-persistent t))
+  :config
+  ;; Configuration goes here
+  )
+
+;; cscope
+;; http://wikemacs.org/index.php/Python#Indexing_sources:_ctags.2C_cscope.2C_pycscope
+;; https://github.com/alpha22jp/helm-cscope.el
+(use-package helm-cscope
+  :ensure t
+  )
+
 ;; PHP support
 (use-package php-mode 
+  :init
+  (require 'xcscope)
   :ensure t
+  :config
   )
 
 ;; Powerline
@@ -83,11 +112,16 @@
 (add-hook 'python-mode-hook #'hs-minor-mode)
 (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
 
+;; Enable cscope in c-mode
+(add-hook 'c-mode-common-hook 'helm-cscope-mode)
+
+;; Auto-generated
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
     (ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader evil-indent-textobject elpy))))
