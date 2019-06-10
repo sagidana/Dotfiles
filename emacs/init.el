@@ -102,8 +102,14 @@
     ;; window vertical split
     (evil-leader/set-key "wvs" 'split-window-right)
 
-    ;; Save
-    (evil-leader/set-key "s" 'save-buffer)
+    ;; -------------------------------------------
+    ;; Globals commands
+    ;; -------------------------------------------
+
+    ;; Update (save)
+    (evil-leader/set-key "u" 'save-buffer)
+    ;; Quit
+    (evil-leader/set-key "q" 'kill-emacs)
   )
 
   (use-package evil-surround
@@ -150,6 +156,7 @@
 ;; -----------------------------
 ;; Programming Languages Support
 ;; -----------------------------
+
 ;; C# support
 (use-package csharp-mode
   :ensure t)
