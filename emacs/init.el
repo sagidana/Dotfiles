@@ -74,6 +74,14 @@
     
     ;; Git status
     (evil-leader/set-key "gs" 'magit-status)
+    
+    ;; -------------------------------------------
+    ;; Toggle commands
+    ;; -------------------------------------------
+
+    ;; toggle imenu window
+    (evil-leader/set-key "ti" 'imenu-list-smart-toggle)
+
 
     ;; -------------------------------------------
     ;; Open commands
@@ -153,6 +161,15 @@
   :ensure t
   )
 
+;; imenu-list
+(use-package imenu-list
+  :ensure t
+  :config
+  (setq imenu-list-focus-after-activation t)
+  (setq imenu-list-size 0.18)  
+  (setq imenu-list-position 'left)
+)
+
 ;; -----------------------------
 ;; Programming Languages Support
 ;; -----------------------------
@@ -207,7 +224,7 @@
  '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
-    (evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
+    (imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
