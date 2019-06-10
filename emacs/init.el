@@ -39,6 +39,12 @@
   :config
   (evil-mode 1)
 
+  ;; Enable hs-minor-mode to the relevant modes (for folding)
+  (add-hook 'c-mode-common-hook #'hs-minor-mode)
+  (add-hook 'python-mode-hook #'hs-minor-mode)
+  (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
+  (add-hook 'csharp-mode-hook #'hs-minor-mode)
+
   (use-package evil-leader
     :ensure t
     :config
@@ -163,6 +169,16 @@
 ;; https://github.com/alpha22jp/helm-cscope.el
 (use-package helm-cscope
   :ensure t
+  :config
+  ;; Enable cscope 
+  ;;   apt-get install cscope
+  ;;   pip install pycscope
+  ;;   # in project base dir:
+  ;;   find . -name '*.py' > cscope.files
+  ;;   cscope -R 
+  (add-hook 'c-mode-common-hook 'helm-cscope-mode)
+  (add-hook 'python-mode-hook 'helm-cscope-mode)
+  (add-hook 'csharp-mode-hook 'helm-cscope-mode)
   )
 
 ;; imenu-list
@@ -173,6 +189,21 @@
   (setq imenu-list-size 0.18)  
   (setq imenu-list-position 'left)
 )
+
+;; yasnippets
+(use-package yasnippet
+  :ensure t
+  :config
+  ;; Sinppets colletions for all the languages!!
+  (use-package yasnippet-snippets
+    :ensure t
+    :config
+    ;; enable yasnippet on specific modes
+    (yas-reload-all)
+    (add-hook 'c-mode-common-hook #'yas-minor-mode)
+    (add-hook 'python-mode-hook #'yas-minor-mode)
+    )
+  )
 
 ;; -----------------------------
 ;; Programming Languages Support
@@ -202,22 +233,6 @@
     :ensure spacemacs-theme
     :config (load-theme 'spacemacs-dark t)
   )
-
-;; Enable hs-minor-mode to the relevant modes (for folding)
-(add-hook 'c-mode-common-hook #'hs-minor-mode)
-(add-hook 'python-mode-hook #'hs-minor-mode)
-(add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
-(add-hook 'csharp-mode-hook #'hs-minor-mode)
-
-;; Enable cscope 
-;;   apt-get install cscope
-;;   pip install pycscope
-;;   # in project base dir:
-;;   find . -name '*.py' > cscope.files
-;;   cscope -R 
-(add-hook 'c-mode-common-hook 'helm-cscope-mode)
-(add-hook 'python-mode-hook 'helm-cscope-mode)
-(add-hook 'csharp-mode-hook 'helm-cscope-mode)
 
 ;; Auto-generated
 (custom-set-variables
