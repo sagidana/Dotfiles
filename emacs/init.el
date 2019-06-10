@@ -1,14 +1,3 @@
-;; Disable toolbar, menu-bar, scroll-bar.
-(tool-bar-mode -1) 
-(menu-bar-mode -1)
-(toggle-scroll-bar -1) 
-
-;;; Adding lines numbers
-(global-linum-mode 1)
-
-; Hide the startup message!
-(setq inhibit-startup-message t) 
-
 (require 'package)
 ;; Org-Mode
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
@@ -19,6 +8,21 @@
 
 (setq package-enable-at-startup nil)
 (package-initialize)
+
+;; Disable toolbar, menu-bar, scroll-bar.
+(tool-bar-mode -1) 
+(menu-bar-mode -1)
+(toggle-scroll-bar -1) 
+
+;;; Adding lines numbers
+(global-linum-mode 1)
+
+;; Hide the startup message!
+(setq inhibit-startup-message t) 
+
+;; disable creating backup files
+(setq auto-save-default nil) ; stop creating #autosave# files
+(setq make-backup-files nil) ; stop creating backup~ files
 
 ;; Globally resize window bindings!
 (global-set-key (kbd "S-C-h") (lambda() (interactive) (shrink-window-horizontally 6)))
