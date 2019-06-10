@@ -20,6 +20,12 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
+;; Globally resize window bindings!
+(global-set-key (kbd "S-C-h") (lambda() (interactive) (shrink-window-horizontally 6)))
+(global-set-key (kbd "S-C-l") (lambda() (interactive) (enlarge-window-horizontally 6)))
+(global-set-key (kbd "S-C-k") (lambda() (interactive) (shrink-window 6)))
+(global-set-key (kbd "S-C-j") (lambda() (interactive) (enlarge-window 6)))
+
 ;; Evil-Mode
 (use-package evil
   :ensure t
@@ -37,8 +43,13 @@
     ;; Setting the leader to space.
     (evil-leader/set-leader "<SPC>")
 
-    ;; Setting custom commands
+    ;; launching ranger
     (evil-leader/set-key "r" 'ranger)
+
+    ;; -------------------------------------------
+    ;; Search commands
+    ;; -------------------------------------------
+
     ;; Search file in project 
     (evil-leader/set-key "sf" 'helm-projectile)
     ;; Search in files
@@ -49,10 +60,50 @@
     (evil-leader/set-key "sx" 'helm-cscope-find-this-symbol-no-prompt)
     ;; List all references inside current function
     (evil-leader/set-key "sX" 'helm-cscope-find-called-function-no-prompt)
+
+    ;; -------------------------------------------
+    ;; Fold command (z in vim is for foldings)
+    ;; -------------------------------------------
+    
     ;; Fold all by level
     (evil-leader/set-key "zl" 'hs-hide-level)
+
+    ;; -------------------------------------------
+    ;; Git commands
+    ;; -------------------------------------------
+    
     ;; Git status
     (evil-leader/set-key "gs" 'magit-status)
+
+    ;; -------------------------------------------
+    ;; Open commands
+    ;; -------------------------------------------
+
+    ;; open config file
+    (evil-leader/set-key "oc" (lambda() (interactive) (find-file user-init-file)))
+
+    ;; -------------------------------------------
+    ;; Buffers commands
+    ;; -------------------------------------------
+
+    ;; buffers list
+    (evil-leader/set-key "bl" 'buffer-menu)
+    ;; buffer kill
+    (evil-leader/set-key "bk" 'kill-this-buffer)
+
+    ;; -------------------------------------------
+    ;; Windows commands
+    ;; -------------------------------------------
+
+    ;; window kill
+    (evil-leader/set-key "wk" 'delete-window)
+    ;; window horizontal split
+    (evil-leader/set-key "whs" 'split-window-below)
+    ;; window vertical split
+    (evil-leader/set-key "wvs" 'split-window-right)
+
+    ;; Save
+    (evil-leader/set-key "s" 'save-buffer)
   )
 
   (use-package evil-surround
