@@ -39,15 +39,19 @@
 
     ;; Setting custom commands
     (evil-leader/set-key "r" 'ranger)
+    ;; Search file in project 
+    (evil-leader/set-key "sf" 'helm-projectile)
     ;; Search in files
-    (evil-leader/set-key "sif" 'helm-do-ag-project-root)
-
+    (evil-leader/set-key "sif" 'helm-projectile-grep)
     ;; Go to definition
-    (evil-leader/set-key "gd" 'helm-cscope-find-global-definition-no-prompt)
+    (evil-leader/set-key "sd" 'helm-cscope-find-global-definition-no-prompt)
     ;; Cross-references
-    (evil-leader/set-key "x" 'helm-cscope-find-this-symbol-no-prompt)
+    (evil-leader/set-key "sx" 'helm-cscope-find-this-symbol-no-prompt)
     ;; List all references inside current function
-    (evil-leader/set-key "X" 'helm-cscope-find-called-function-no-prompt)
+    (evil-leader/set-key "sX" 'helm-cscope-find-called-function-no-prompt)
+
+    ;; Fold all by level
+    (evil-leader/set-key "zl" 'hs-hide-level)
   )
 
   (use-package evil-surround
@@ -58,8 +62,7 @@
   (use-package evil-magit
     :ensure t)
 
-
- (use-package evil-indent-textobject
+  (use-package evil-indent-textobject
     :ensure t))
 
 ;; Ranger 
@@ -69,14 +72,9 @@
   (setq ranger-cleanup-eagerly t)
   )
 
-;; helm silver searcher
-(use-package helm-ag
+;; helm projectile
+(use-package helm-projectile
   :ensure t
-  :init
-  ;; Enable follow mode by default
-  (custom-set-variables '(helm-follow-mode-persistent t))
-  :config
-  ;; Configuration goes here
   )
 
 ;; cscope
@@ -107,13 +105,19 @@
     :config (load-theme 'spacemacs-dark t)
   )
 
-;; Enable hs-minor-mode to the relevant modes
+;; Enable hs-minor-mode to the relevant modes (for folding)
 (add-hook 'c-mode-common-hook #'hs-minor-mode)
 (add-hook 'python-mode-hook #'hs-minor-mode)
 (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
 
-;; Enable cscope in c-mode
+;; Enable cscope 
+;;   apt-get install cscope
+;;   pip install pycscope
+;;   # in project base dir:
+;;   find . -name '*.py' > cscope.files
+;;   cscope -R 
 (add-hook 'c-mode-common-hook 'helm-cscope-mode)
+(add-hook 'python-mode-hook 'helm-cscope-mode)
 
 ;; Auto-generated
 (custom-set-variables
@@ -124,7 +128,7 @@
  '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
-    (ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader evil-indent-textobject elpy))))
+    (helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader evil-indent-textobject elpy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
