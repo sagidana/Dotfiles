@@ -66,6 +66,7 @@
   (use-package evil-indent-plus
     :ensure t
     :config
+    ;; Adding indent-text-objects
     (define-key evil-inner-text-objects-map "i" 'evil-indent-plus-i-indent)
     (define-key evil-outer-text-objects-map "i" 'evil-indent-plus-a-indent)
     (define-key evil-inner-text-objects-map "I" 'evil-indent-plus-i-indent-up)
@@ -85,6 +86,7 @@
 ;; helm projectile
 (use-package helm-projectile
   :ensure t
+  :config
   )
 
 ;; cscope
