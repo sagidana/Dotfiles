@@ -104,8 +104,10 @@
     ;; Comments commands
     ;; -------------------------------------------
 
-    ;; Comment operator... (all I really need...).
-    (evil-leader/set-key "cc" 'evilnc-comment-operator)
+    ;; Comment line
+    (evil-leader/set-key "cl" 'evilnc-comment-or-uncomment-lines)
+    ;; Comment operator
+    (evil-leader/set-key "co" 'evilnc-comment-operator)
 
     ;;;; -------------------------------------------
     ;; Buffers commands
