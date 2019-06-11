@@ -101,6 +101,13 @@
     (evil-leader/set-key "oc" (lambda() (interactive) (find-file user-init-file)))
 
     ;; -------------------------------------------
+    ;; Comments commands
+    ;; -------------------------------------------
+
+    ;; Comment operator... (all I really need...).
+    (evil-leader/set-key "cc" 'evilnc-comment-operator)
+
+    ;;;; -------------------------------------------
     ;; Buffers commands
     ;; -------------------------------------------
 
@@ -149,6 +156,12 @@
     (define-key evil-inner-text-objects-map "J" 'evil-indent-plus-i-indent-up-down)
     (define-key evil-outer-text-objects-map "J" 'evil-indent-plus-a-indent-up-down)
   )
+
+  (use-package evil-nerd-commenter
+    :ensure t
+    :config
+    ;;(evilnc-default-hotkeys nil t)
+    )
 )
 
 ;; Ranger 
