@@ -160,10 +160,13 @@
   )
 
   (use-package evil-nerd-commenter
-    :ensure t
-    :config
-    ;;(evilnc-default-hotkeys nil t)
-    )
+    :ensure t)
+
+  ;; I still haven't decided how I am going to be using org-mode
+  ;; (use-package evil-org
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-hook 'org-mode-hook 'evil-org-mode))
 )
 
 ;; Ranger 
