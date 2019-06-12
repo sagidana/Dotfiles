@@ -72,6 +72,8 @@
     (evil-leader/set-key "sf" 'helm-projectile)
     ;; Search in files
     (evil-leader/set-key "sif" 'helm-projectile-grep)
+    ;; Search in imenu
+    (evil-leader/set-key "sii" 'helm-imenu)
     ;; Go to definition
     (evil-leader/set-key "sd" 'helm-cscope-find-global-definition-no-prompt)
     ;; Cross-references
@@ -99,7 +101,6 @@
 
     ;; toggle imenu window
     (evil-leader/set-key "ti" 'imenu-list-smart-toggle)
-
 
     ;; -------------------------------------------
     ;; Open commands
@@ -278,7 +279,7 @@
  '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
-    (swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
+    (treemacs swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
