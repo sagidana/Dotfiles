@@ -1,4 +1,9 @@
 (require 'package)
+
+;; -------------------------------
+;; Sources
+;; -------------------------------
+
 ;; Org-Mode
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 ;; Package-Manager
@@ -29,6 +34,9 @@
 (global-set-key (kbd "S-C-l") (lambda() (interactive) (enlarge-window-horizontally 6)))
 (global-set-key (kbd "S-C-k") (lambda() (interactive) (shrink-window 6)))
 (global-set-key (kbd "S-C-j") (lambda() (interactive) (enlarge-window 6)))
+
+;; replace M-x with helm-M-x
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;; Evil-Mode
 (use-package evil
@@ -133,6 +141,8 @@
     ;; Globals commands
     ;; -------------------------------------------
 
+    ;; Kill buffer and windows
+    (evil-leader/set-key "k" 'kill-buffer-and-window)
     ;; Update (save)
     (evil-leader/set-key "u" 'save-buffer)
     ;; Quit
@@ -161,12 +171,6 @@
 
   (use-package evil-nerd-commenter
     :ensure t)
-
-  ;; I still haven't decided how I am going to be using org-mode
-  ;; (use-package evil-org
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-hook 'org-mode-hook 'evil-org-mode))
 )
 
 ;; Ranger 
@@ -174,6 +178,13 @@
   :commands (ranger)
   :config
   (setq ranger-cleanup-eagerly t)
+  )
+
+;; Helm...
+(use-package helm
+  :ensure t
+  :config
+  (setq helm-M-x-fuzzy-match t)
   )
 
 ;; helm projectile
@@ -252,6 +263,12 @@
     :config (load-theme 'spacemacs-dark t)
   )
 
+;; Auto-complete for lisp (mainly).
+(use-package auto-complete
+  :ensure t
+  :config
+  (ac-config-default))
+
 ;; Auto-generated
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -261,7 +278,7 @@
  '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
-    (imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
+    (swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
