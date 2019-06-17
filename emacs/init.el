@@ -47,8 +47,12 @@
   :config
   (evil-mode 1)
 
+  ;; Disable evil-mode for some modes
+  ;; (add-to-list 'evil-emacs-state-modes 'speedbar-mode)
+  
   ;; Enable hs-minor-mode to the relevant modes (for folding)
   (add-hook 'c-mode-common-hook #'hs-minor-mode)
+  (add-hook 'html-mode-common-hook #'hs-minor-mode)
   (add-hook 'python-mode-hook #'hs-minor-mode)
   (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
   (add-hook 'csharp-mode-hook #'hs-minor-mode)
@@ -102,6 +106,9 @@
     ;; toggle imenu window
     (evil-leader/set-key "ti" 'imenu-list-smart-toggle)
 
+    ;; toggle speedbar
+    (evil-leader/set-key "ts" (lambda() (interactive) (sr-speedbar-toggle)))
+
     ;; -------------------------------------------
     ;; Open commands
     ;; -------------------------------------------
@@ -137,6 +144,15 @@
     (evil-leader/set-key "whs" 'split-window-below)
     ;; window vertical split
     (evil-leader/set-key "wvs" 'split-window-right)
+    
+    ;; -------------------------------------------
+    ;; Frames commands
+    ;; -------------------------------------------
+
+    ;; frame create
+    (evil-leader/set-key "fc" 'make-frame-command)
+    ;; frame kill
+    (evil-leader/set-key "fk" 'delete-frame)
 
     ;; -------------------------------------------
     ;; Globals commands
@@ -172,6 +188,20 @@
 
   (use-package evil-nerd-commenter
     :ensure t)
+)
+
+;; Speedbar 
+(use-package sr-speedbar
+  :ensure t
+  :init
+  ;; Put the speedbar  in the left side
+  (setq sr-speedbar-right-side nil)
+  ;; do not  change to currect file automaticaly
+  (setq sr-speedbar-auto-refresh nil)
+  ;; Show all files
+  (setq speedbar-show-unknown-files t)
+  :config
+  (define-key speedbar-mode-map "\t" 'speedbar-toggle-line-expansion) 
 )
 
 ;; Ranger 
@@ -279,7 +309,7 @@
  '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
-    (treemacs swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
+    (sr-speedbar treemacs swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
