@@ -48,7 +48,8 @@
   (evil-mode 1)
 
   ;; Disable evil-mode for some modes
-  ;; (add-to-list 'evil-emacs-state-modes 'speedbar-mode)
+  ;; (evil-set-initial-state 'help-mode 'emacs)
+  ;; (add-to-list 'evil-emacs-state-modes 'org-mode)
   
   ;; Enable hs-minor-mode to the relevant modes (for folding)
   (add-hook 'c-mode-common-hook #'hs-minor-mode)
@@ -149,7 +150,7 @@
     ;; Frames commands
     ;; -------------------------------------------
 
-    ;; frame create
+    ;; frame create 
     (evil-leader/set-key "fc" 'make-frame-command)
     ;; frame kill
     (evil-leader/set-key "fk" 'delete-frame)
@@ -269,6 +270,14 @@
 ;; Programming Languages Support
 ;; -----------------------------
 
+;; Python auto-complete
+(use-package jedi
+  :ensure t
+  :config
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (setq jedi:complete-on-dot t)
+  )
+
 ;; C# support
 (use-package csharp-mode
   :ensure t)
@@ -309,7 +318,7 @@
  '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
-    (sr-speedbar treemacs swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
+    (websocket sr-speedbar treemacs swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
