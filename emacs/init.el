@@ -29,6 +29,9 @@
 (setq auto-save-default nil) ; stop creating #autosave# files
 (setq make-backup-files nil) ; stop creating backup~ files
 
+;; Save sessions between startups
+(desktop-save-mode 1)
+
 ;; Globally resize window bindings!
 (global-set-key (kbd "S-C-h") (lambda() (interactive) (shrink-window-horizontally 6)))
 (global-set-key (kbd "S-C-l") (lambda() (interactive) (enlarge-window-horizontally 6)))
@@ -130,6 +133,10 @@
     ;; Buffers commands
     ;; -------------------------------------------
 
+    ;; buffers before
+    (evil-leader/set-key "bb" 'mode-line-other-buffer)
+    ;; buffers switch
+    (evil-leader/set-key "bs" 'helm-projectile-switch-to-buffer)
     ;; buffers list
     (evil-leader/set-key "bl" 'buffer-menu)
     ;; buffer kill
