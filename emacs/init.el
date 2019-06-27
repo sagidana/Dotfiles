@@ -120,6 +120,9 @@
     ;; toggle speedbar
     (evil-leader/set-key "ts" (lambda() (interactive) (sr-speedbar-toggle)))
 
+    ;; toggle treemacs
+    (evil-leader/set-key "tt" (lambda() (interactive) (treemacs)))
+
     ;; -------------------------------------------
     ;; Open commands
     ;; -------------------------------------------
@@ -233,11 +236,21 @@
   (setq helm-M-x-fuzzy-match t)
   )
 
+;; Treemacs
+(use-package treemacs
+  :ensure t
+  :config
+    (use-package treemacs-evil
+	:ensure t)
+    (use-package treemacs-projectile
+	:ensure t)
+  )
+
 ;; Projectile
 (use-package helm-projectile
   :ensure t
   :config
-  ;;(setq projectile-project-search-path '("path/to/projects"))
+  ;;(setq projectile-project-search-path '("/Projects"))
   (projectile-discover-projects-in-search-path)
   )
 
@@ -334,7 +347,7 @@
  '(helm-follow-mode-persistent t)
  '(package-selected-packages
    (quote
-    (websocket sr-speedbar treemacs swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
+    (jedi websocket sr-speedbar treemacs swiper counsel imenu-list evil-indent-plus helm-projectile helm-ag-r helm-ag ranger helm spacemacs-theme use-package powerline php-mode evil-surround evil-leader elpy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
