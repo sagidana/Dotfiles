@@ -90,6 +90,13 @@
     (evil-leader/set-key "sX" 'helm-cscope-find-called-function-no-prompt)
 
     ;; -------------------------------------------
+    ;; Projects commands
+    ;; -------------------------------------------
+    ;; Project switch
+    (evil-leader/set-key "ps" 'helm-projectile-switch-project)
+
+
+    ;; -------------------------------------------
     ;; Fold command (z in vim is for foldings)
     ;; -------------------------------------------
     
@@ -136,7 +143,7 @@
     ;; buffers before
     (evil-leader/set-key "bb" 'mode-line-other-buffer)
     ;; buffers switch
-    (evil-leader/set-key "bs" 'helm-projectile-switch-to-buffer)
+    (evil-leader/set-key "bs" 'helm-buffers-list)
     ;; buffers list
     (evil-leader/set-key "bl" 'buffer-menu)
     ;; buffer kill
@@ -226,10 +233,12 @@
   (setq helm-M-x-fuzzy-match t)
   )
 
-;; helm projectile
+;; Projectile
 (use-package helm-projectile
   :ensure t
   :config
+  ;;(setq projectile-project-search-path '("path/to/projects"))
+  (projectile-discover-projects-in-search-path)
   )
 
 ;; cscope
