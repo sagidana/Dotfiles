@@ -3,7 +3,7 @@
 #
 # Should you change your keyboard layout some time, delete
 # this file and re-run i3-config-wizard(1).
-#
+
 
 # i3 config file (v4)
 #
@@ -35,21 +35,18 @@ bindsym $mod+Return exec /usr/bin/urxvt
 # kill focused window
 bindsym $mod+Shift+q kill
 
-set $bg-color 	         #2f343f
-set $inactive-bg-color   #2f343f
-set $text-color          #f3f4f5
-set $inactive-text-color #676E7D
-set $urgent-bg-color     #E53935
-
 # start dmenu (a program launcher)
 #bindsym $mod+d exec rofi -show run -ilines 3 -eh 2 -width 100 -padding 800 -opacity "85" -bw 0 -bc "$bg-color" -bg "$bg-color" -fg "$text-color" -hlbg "$bg-color" -hlfg "#9575cd"
 
 #bindsym $mod+d exec dmenu_run
 
+bindsym $mod+d exec "dmenu_run -nf '#BBBBBB' -nb '#222222' -sb '#005577' -sf '#EEEEEE' -fn 'monospace-10' -p 'dmenu prompt &gt;'"
+
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -138,22 +135,43 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# class                 border  bground text    indicator child_border
+client.focused          #0B598D #0B598D #B6B6B6 #0B598D   #0B598D
+client.focused_inactive #3C3C3C #3C3C3C #B6B6B6 #3C3C3C   #3C3C3C
+client.unfocused        #3C3C3C #3C3C3C #B6B6B6 #3C3C3C   #3C3C3C
+client.urgent           #3C3C3C #3C3C3C #B6B6B6 #3C3C3C   #3C3C3C
+client.placeholder      #3C3C3C #3C3C3C #B6B6B6 #3C3C3C   #3C3C3C
+
+client.background       #3C3C3C
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
 	position top
 	status_command i3blocks -c ~/.config/i3/i3blocks.conf
+
+    colors {
+        background #3C3C3C
+        statusline #B6B6B6
+        separator  #666666
+    
+        focused_workspace  #0B598D #0B598D #B6B6B6
+        active_workspace   #3C3C3C #3C3C3C #B6B6B6
+        inactive_workspace #3C3C3C #3C3C3C #B6B6B6
+        urgent_workspace   #3C3C3C #3C3C3C #B6B6B6
+        binding_mode       #3C3C3C #3C3C3C #B6B6B6
+    }
 }
 
 
 bindsym $mod+Print exec gnome-screenshot -i
 
 # Disable title bars on windows
-for_window [class="^.*"] border pixel 0
+#for_window [class="^.*"] border pixel 0
 
 # Gaps!
-#gaps inner 10
-#gaps outer 10
+gaps inner 5
+gaps outer 5
 #gaps horizontal 10
 #gaps vertical 10
 #gaps top 10
@@ -162,21 +180,23 @@ for_window [class="^.*"] border pixel 0
 #gaps left 10
 
 # Background wallpaper
-#exec_always feh --bg-scale ~/Pictures/wallpaper.jpg
+exec_always feh --bg-scale ~/Pictures/wallpaper.jpg
 
 # Screenlayout
 #exec_always ~/.screenlayout/layout.sh
 
 # Locking PC
-bindsym $mod+Ctrl+l exec i3lock-fancy -- scrot -z
+bindsym $mod+Ctrl+l exec i3lock-fancy 
+#bindsym $mod+Ctrl+l exec i3lock-fancy -- scrot -z
 
 # Transparency with compton
-exec --no-startup-id compton -f
+#exec --no-startup-id compton -f
+exec_always --no-startup-id compton -b -f
 
 # Setting Network Manager applet
 exec --no-startup-id nm-applet
 
-bindsym $mod+d exec rofi -show run -lines 3 -eh 2 -width 100 -padding 800 -opacity "85" -bw 0 -bc "$bg-color" -bg "$bg-color" -fg "$text-color" -hlbg "$bg-color" -hlfg "#9575cd"
+#bindsym $mod+d exec rofi -show run -lines 3 -eh 2 -width 100 -padding 800 -opacity "85" -bw 0 -bc "$bg-color" -bg "$bg-color" -fg "$text-color" -hlbg "$bg-color" -hlfg "#9575cd"
 
 
 # Pulse Audio controls
@@ -234,6 +254,3 @@ bindsym $mod+Shift+0 move container to workspace $ws10
 
 #xprop to extract class from window.
 #assign [class=""] $ws1
-
-
-
