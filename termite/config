@@ -1,9 +1,7 @@
 [options]
 font = Monospace 12
 
-
 [colors]
-
 # special
 foreground      = #cccccc
 foreground_bold = #cccccc
