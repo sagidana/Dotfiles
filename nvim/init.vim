@@ -95,6 +95,11 @@ set background=dark " for the dark version
 colorscheme one
 
 
+""" ---- General bindings ----
+" Disable search highlights until next search at <esc> press.
+nnoremap <esc> :noh<return><esc>
+
+
 """ ---- Leader configuration ----
 let mapleader = "\<space>"  " set leader as space
 
@@ -116,5 +121,8 @@ nnoremap <leader>tt :NERDTreeToggle<cr>
 " Cscope keybindings [cross-referrences]
 nnoremap <leader>fa :call CscopeFindInteractive(expand('<cword>'))<CR>
 nnoremap <leader>l :call ToggleLocationList()<CR>
+
+
+
 
 
