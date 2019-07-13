@@ -42,6 +42,9 @@ Plugin 'ludovicchabant/vim-gutentags'
 " Cscope management plugin
 Plugin 'brookhong/cscope.vim'
 
+" Fuzzy finder files
+Plugin 'junegunn/fzf'
+
 
 """ ---- Plugins end here ----
 
@@ -103,26 +106,34 @@ nnoremap <esc> :noh<return><esc>
 """ ---- Leader configuration ----
 let mapleader = "\<space>"  " set leader as space
 
-" Folding
-nnoremap <leader>z0 :set foldlevel=0<cr>
-nnoremap <leader>z1 :set foldlevel=1<cr>
-nnoremap <leader>z2 :set foldlevel=2<cr>
-nnoremap <leader>z3 :set foldlevel=3<cr>
-nnoremap <leader>z4 :set foldlevel=4<cr>
-nnoremap <leader>z5 :set foldlevel=5<cr>
-nnoremap <leader>z6 :set foldlevel=6<cr>
-nnoremap <leader>z7 :set foldlevel=7<cr>
-nnoremap <leader>z8 :set foldlevel=8<cr>
-nnoremap <leader>z9 :set foldlevel=9<cr>
+" -- Folding commands --
+"
+nnoremap <leader>z0 :set foldlevel=0<CR>
+nnoremap <leader>z1 :set foldlevel=1<CR>
+nnoremap <leader>z2 :set foldlevel=2<CR>
+nnoremap <leader>z3 :set foldlevel=3<CR>
+nnoremap <leader>z4 :set foldlevel=4<CR>
+nnoremap <leader>z5 :set foldlevel=5<CR>
+nnoremap <leader>z6 :set foldlevel=6<CR>
+nnoremap <leader>z7 :set foldlevel=7<CR>
+nnoremap <leader>z8 :set foldlevel=8<CR>
+nnoremap <leader>z9 :set foldlevel=9<CR>
 
-" NerdTree toggle
-nnoremap <leader>tt :NERDTreeToggle<cr>
+" -- Toggle commands --
 
-" Cscope keybindings [cross-referrences]
-nnoremap <leader>fa :call CscopeFindInteractive(expand('<cword>'))<CR>
-nnoremap <leader>l :call ToggleLocationList()<CR>
+" [Toggle Tree] NerdTree toggle
+nnoremap <leader>tt :NERDTreeToggle<CR>
 
+" [Toggle Locations] toggle the locationlist
+nnoremap <leader>tl :call ToggleLocationList()<CR>
 
+" -- Search commands --
+"
+" [Search Options] Cscope keybindings [cross-referrences]
+nnoremap <leader>so :call CscopeFindInteractive(expand('<cword>'))<CR>
+
+" [Search File] 
+nnoremap <leader>sf :FZF<CR>
 
 
 
