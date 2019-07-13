@@ -30,6 +30,18 @@ Plugin 'scrooloose/nerdcommenter'
 " Colorschemes
 Plugin 'rakr/vim-one'
 
+" Python completion
+Plugin 'davidhalter/jedi-vim'
+
+"Neovim Autocomplete
+Plugin 'zchee/deoplete-jedi'
+
+" Ctags management plugin
+Plugin 'ludovicchabant/vim-gutentags'
+
+" Cscope management plugin
+Plugin 'brookhong/cscope.vim'
+
 
 """ ---- Plugins end here ----
 
@@ -48,12 +60,17 @@ set expandtab               " converts tabs to white space
 set shiftwidth=4            " width for autoindents
 set autoindent              " indent a new line the same amount as the line just typed
 set number                  " add line numbers
+set foldmethod=indent       " setting folding to indentations
+set splitbelow              " the default split direction will be at the bottom
 
 " allows auto-indenting depending on file type
 filetype plugin indent on  
 
 " Enable loading plugin file
 filetype plugin on
+
+
+""" ---- Colorscheme! ----
 
 "Credit joshdick
 "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
@@ -81,5 +98,23 @@ colorscheme one
 """ ---- Leader configuration ----
 let mapleader = "\<space>"  " set leader as space
 
+" Folding
+nnoremap <leader>z0 :set foldlevel=0<cr>
+nnoremap <leader>z1 :set foldlevel=1<cr>
+nnoremap <leader>z2 :set foldlevel=2<cr>
+nnoremap <leader>z3 :set foldlevel=3<cr>
+nnoremap <leader>z4 :set foldlevel=4<cr>
+nnoremap <leader>z5 :set foldlevel=5<cr>
+nnoremap <leader>z6 :set foldlevel=6<cr>
+nnoremap <leader>z7 :set foldlevel=7<cr>
+nnoremap <leader>z8 :set foldlevel=8<cr>
+nnoremap <leader>z9 :set foldlevel=9<cr>
+
+" NerdTree toggle
+nnoremap <leader>tt :NERDTreeToggle<cr>
+
+" Cscope keybindings [cross-referrences]
+nnoremap <leader>fa :call CscopeFindInteractive(expand('<cword>'))<CR>
+nnoremap <leader>l :call ToggleLocationList()<CR>
 
 
