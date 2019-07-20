@@ -4,10 +4,9 @@
 
     set rtp+=~/.config/nvim/bundle/Vundle.vim
     call vundle#begin('~/.config/nvim/bundle')
-    "
+
     " let Vundle manage Vundle, required
     Plugin 'VundleVim/Vundle.vim'
-
 
     """ ---- Plugins start here ----
 
@@ -23,16 +22,8 @@
         " Fuzzy finder files
         Plugin 'junegunn/fzf'
 
-        " " Markdown syntax support
-        " Plugin 'plasticboy/vim-markdown'
-
-        " Markdown preview
-        " Documentation: https://freesoft.dev/program/23001221
-        Plugin 'JamshedVesuna/vim-markdown-preview'
-
         " Table mode, for creating and modifying tables
         Plugin 'dhruvasagar/vim-table-mode'
-
 
     """ ---- Plugins end here ----
 
@@ -93,18 +84,12 @@
     " set background=light " for the light version
     colorscheme one
 
-    
-""" ---- Markdown Configuration ----
-
-    " let vim markdown preview know to use gimp as converter.
-    let vim_markdown_preview_github=1
-
 
 """ ---- Table mode configuration ----
 
-    " " Disabl default mappings used by the plugin.
-    " let g:table_mode_tableize_op_map='|'
-    " let g:table_mode_tableize_map='|'
+    " Disabl default mappings used by the plugin.
+    let g:table_mode_tableize_op_map='<F2>'
+    let g:table_mode_tableize_map='<F2>'
 
 
 """ ---- Netrw Configuration ----
@@ -130,24 +115,19 @@
     " Bind tab to fold toggle.
     nnoremap <tab> za
 
-    " Windows navigation
+    " Bind <C-i> to <M-o>
+    nnoremap <M-o> <C-i>
+
+    " Navigation
     nnoremap <C-J> <C-W><C-J>
     nnoremap <C-K> <C-W><C-K>
     nnoremap <C-L> <C-W><C-L>
     nnoremap <C-H> <C-W><C-H>
 
-    " Navigation
     nnoremap <M-j> 5j
     nnoremap <M-k> 5k
     vnoremap <M-j> 5j
     vnoremap <M-k> 5k
-
-    " Empty Lines
-    nnoremap <M-o> o<esc>cc<esc>
-    vnoremap <M-o> o<esc>cc<esc>
-
-    nnoremap <M-O> O<esc>cc<esc>
-    vnoremap <M-O> O<esc>cc<esc>
 
     """ --- Leader configuration ---
 
@@ -162,9 +142,6 @@
             
             " [Open Config] Opening the init.vim
             nnoremap <leader>oc :vsplit $MYVIMRC<CR>
-            
-            " [Open Preview] Open markdown preview
-            nnoremap <leader>op :call Vim_Markdown_Preview()<CR>
             
         " -- Folding commands --
         
@@ -181,17 +158,11 @@
 
         " -- Toggle commands --
 
-            " [Toggle Locations] toggle the locationlist
-            nnoremap <leader>tl :call ToggleLocationList()<CR>
-            "
             " [Toggle Table mode] TableMode toggle!
             nnoremap <leader>tt :TableModeToggle<CR>
 
         " -- Search commands --
            
-            " [Search Options] Cscope keybindings [cross-referrences]
-            nnoremap <leader>so :call CscopeFindInteractive(expand('<cword>'))<CR>
-
             " [Search File] 
             nnoremap <leader>sf :FZF<CR>
 
@@ -215,13 +186,13 @@
 
             " Motion
 
-                autocmd FileType python nnoremap <buffer> <silent> <M-r> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
-                autocmd FileType python onoremap <buffer> <silent> <M-r> :call OperPendPyTextObject(g:python_for_pattern, 1, v:count)<cr>
-                autocmd FileType python vnoremap <buffer> <silent> <M-r> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
+                " autocmd FileType python nnoremap <buffer> <silent> <M-r> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
+                " autocmd FileType python onoremap <buffer> <silent> <M-r> :call OperPendPyTextObject(g:python_for_pattern, 1, v:count)<cr>
+                " autocmd FileType python vnoremap <buffer> <silent> <M-r> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
 
-                autocmd FileType python nnoremap <buffer> <silent> <M-R> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
-                autocmd FileType python onoremap <buffer> <silent> <M-R> :call OperPendPyTextObject(g:python_for_pattern, 0, v:count)<cr>
-                autocmd FileType python vnoremap <buffer> <silent> <M-R> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
+                " autocmd FileType python nnoremap <buffer> <silent> <M-R> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
+                " autocmd FileType python onoremap <buffer> <silent> <M-R> :call OperPendPyTextObject(g:python_for_pattern, 0, v:count)<cr>
+                " autocmd FileType python vnoremap <buffer> <silent> <M-R> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
 
             " Text Object Selection
 
@@ -596,4 +567,4 @@
                     " autocmd FileType python onoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
 
                     " autocmd FileType python vnoremap <buffer> <silent> iR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
-                    " autocmd FileType python vnoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+                    "> autocmd FileType python vnoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
