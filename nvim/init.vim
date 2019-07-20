@@ -53,7 +53,7 @@
     set shiftwidth=4            " width for autoindents
     set autoindent              " indent a new line the same amount as the line just typed
     set number                  " add line numbers
-    set relativenumber          " setting relative numbers
+    " set relativenumber          " setting relative numbers
     set foldmethod=indent       " setting folding to indentations
     set splitright              " split to the right.
     set splitbelow              " the default split direction will be at the bottom
@@ -96,17 +96,8 @@
     
 """ ---- Markdown Configuration ----
 
-    " Disable foldings
-    let g:vim_markdown_folding_disabled = 1
-
-    " Disable default keybindings
-    let g:vim_markdown_no_default_key_mappings = 1
-
     " let vim markdown preview know to use gimp as converter.
     let vim_markdown_preview_github=1
-
-    " " Disable Ctrl-p binding
-    " let vim_markdown_preview_hotkey=1
 
 
 """ ---- Table mode configuration ----
@@ -116,7 +107,7 @@
     " let g:table_mode_tableize_map='|'
 
 
-""" ---- netrw Configuration ----
+""" ---- Netrw Configuration ----
 
     " Disable banner
     let g:netrw_banner = 0
@@ -220,98 +211,99 @@
 
         " Python for loop text object
 
+            let g:python_for_pattern = 'for .*:$'
+
             " Motion
-            " autocmd FileType python nnoremap <silent> <F2> :<c-u>call NormalMoveNextPyForTextObject(v:count)<cr>
-            " autocmd FileType python onoremap <silent> <F2> :call OperPendPyForTextObject(v:count)<cr>
-            " autocmd FileType python vnoremap <silent> <F2> :<c-u>call VisualMoveNextPyForTextObject(v:count)<cr>
+
+                autocmd FileType python nnoremap <buffer> <silent> <M-r> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
+                autocmd FileType python onoremap <buffer> <silent> <M-r> :call OperPendPyTextObject(g:python_for_pattern, 1, v:count)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> <M-r> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
+
+                autocmd FileType python nnoremap <buffer> <silent> <M-R> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
+                autocmd FileType python onoremap <buffer> <silent> <M-R> :call OperPendPyTextObject(g:python_for_pattern, 0, v:count)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> <M-R> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
 
             " Text Object Selection
 
-            let g:python_for_pattern = 'for .*:$'
-            autocmd FileType python onoremap <buffer> <silent> ir :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> ar :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+                autocmd FileType python onoremap <buffer> <silent> ir :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> ar :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> ir :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> ar :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> ir :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> ar :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 0)<cr>
 
-            autocmd FileType python onoremap <buffer> <silent> iR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+                autocmd FileType python onoremap <buffer> <silent> iR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> iR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> iR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
 
         " Python while loop text object
 
-            " Motion
-
             " Text Object Selection
 
-            let g:python_while_pattern = 'while .*:$'
-            autocmd FileType python onoremap <buffer> <silent> ie :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> ae :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 0)<cr>
+                let g:python_while_pattern = 'while .*:$'
+                autocmd FileType python onoremap <buffer> <silent> ie :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> ae :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> ie :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> ae :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 0)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> ie :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> ae :<c-u>call InnerOuterPyTextObject(g:python_while_pattern, v:count, 0)<cr>
 
-            autocmd FileType python onoremap <buffer> <silent> iE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> aE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 0)<cr>
+                autocmd FileType python onoremap <buffer> <silent> iE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> aE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> iE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> aE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 0)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> iE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> aE :<c-u>call InnerOuterStatementPyTextObject(g:python_while_pattern, v:count, 0)<cr>
 
         " Python if statement text object
 
-            " Motion
-
             " Text Object Selection
-            let g:python_if_pattern = 'if .*:$'
-            autocmd FileType python onoremap <buffer> <silent> if :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> af :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> if :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> af :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 0)<cr>
+                let g:python_if_pattern = 'if .*:$'
+                autocmd FileType python onoremap <buffer> <silent> if :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> af :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 0)<cr>
 
-            autocmd FileType python onoremap <buffer> <silent> iF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> aF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 0)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> if :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> af :<c-u>call InnerOuterPyTextObject(g:python_if_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> iF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> aF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 0)<cr>
+                autocmd FileType python onoremap <buffer> <silent> iF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> aF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 0)<cr>
+
+                autocmd FileType python vnoremap <buffer> <silent> iF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> aF :<c-u>call InnerOuterStatementPyTextObject(g:python_if_pattern, v:count, 0)<cr>
 
         " Python class text object
 
-            " Motion
-
             " Text Object Selection
-            let g:python_class_pattern = 'class .*:$'
-            autocmd FileType python onoremap <buffer> <silent> ic :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> ac :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> ic :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> ac :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 0)<cr>
+                let g:python_class_pattern = 'class .*:$'
+                autocmd FileType python onoremap <buffer> <silent> ic :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> ac :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 0)<cr>
 
-            autocmd FileType python onoremap <buffer> <silent> iC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> aC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 0)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> ic :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> ac :<c-u>call InnerOuterPyTextObject(g:python_class_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> iC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> aC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 0)<cr>
+                autocmd FileType python onoremap <buffer> <silent> iC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> aC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 0)<cr>
+
+                autocmd FileType python vnoremap <buffer> <silent> iC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> aC :<c-u>call InnerOuterStatementPyTextObject(g:python_class_pattern, v:count, 0)<cr>
 
         " Python method/function text object
 
-            " Motion
-
             " Text Object Selection
-            let g:python_method_pattern = 'def .*:$'
-            autocmd FileType python onoremap <buffer> <silent> im :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> am :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> im :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> am :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 0)<cr>
+                let g:python_method_pattern = 'def .*:$'
+                autocmd FileType python onoremap <buffer> <silent> im :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> am :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 0)<cr>
 
-            autocmd FileType python onoremap <buffer> <silent> iM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 1)<cr>
-            autocmd FileType python onoremap <buffer> <silent> aM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 0)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> im :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> am :<c-u>call InnerOuterPyTextObject(g:python_method_pattern, v:count, 0)<cr>
 
-            autocmd FileType python vnoremap <buffer> <silent> iM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 1)<cr>
-            autocmd FileType python vnoremap <buffer> <silent> aM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 0)<cr>
+                autocmd FileType python onoremap <buffer> <silent> iM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 1)<cr>
+                autocmd FileType python onoremap <buffer> <silent> aM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 0)<cr>
+
+                autocmd FileType python vnoremap <buffer> <silent> iM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 1)<cr>
+                autocmd FileType python vnoremap <buffer> <silent> aM :<c-u>call InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 0)<cr>
 
 
 """ ---- Custom Plugins ----
@@ -489,12 +481,18 @@
 
         " -- Python Text Objects
 
-            function! NormalMoveNextPyTextObject(python_statement_pattern, count)
+            function! NormalMovePyTextObject(python_statement_pattern, to_next, count)
                 " Save the user's wrapscan settings.
                 let l:saved_wrapscan = &wrapscan
 
                 let &wrapscan = 0
-                execute "silent! normal! ".'/\v'.a:python_statement_pattern."\r"
+
+                let l:direction = '/'
+                if a:to_next ==# 0
+                    let l:direction = '?'
+                endif
+
+                execute "silent! normal! ".l:direction.'\v'.a:python_statement_pattern."\r"
 
                 " Repeat the search \<count\> times.
                 execute "silent! normal! ".repeat("n", a:count - 1)
@@ -503,14 +501,14 @@
                 let &wrapscan=l:saved_wrapscan
             endfunction
 
-            function! VisualMoveNextPyTextObject(python_statement_pattern, count)
+            function! VisualMovePyTextObject(python_statement_pattern, to_next, count)
                 normal! gv
-                call NormalMoveNextPyTextObject(a:python_statement_pattern, a:count)
+                call NormalMovePyTextObject(a:python_statement_pattern, a:to_next, a:count)
             endfunction
 
-            function! OperPendPyTextObject(python_statement_pattern, count)
+            function! OperPendPyTextObject(python_statement_pattern, to_next, count)
                 normal! v
-                call NormalMoveNextPyTextObject(a:python_statement_pattern, a:count)
+                call NormalMovePyTextObject(a:python_statement_pattern, a:to_next, a:count)
                 normal! k$
             endfunction
 
@@ -572,3 +570,30 @@
                 execute "silent! normal! "."vt:"
             endfunction
                         
+            " Bindings Examples
+
+                " let g:python_for_pattern = 'for .*:$'
+
+                " " Motion
+
+                    " autocmd FileType python nnoremap <buffer> <silent> <M-r> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
+                    " autocmd FileType python onoremap <buffer> <silent> <M-r> :call OperPendPyTextObject(g:python_for_pattern, 1, v:count)<cr>
+                    " autocmd FileType python vnoremap <buffer> <silent> <M-r> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 1, v:count)<cr>
+
+                    " autocmd FileType python nnoremap <buffer> <silent> <M-R> :<c-u>call NormalMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
+                    " autocmd FileType python onoremap <buffer> <silent> <M-R> :call OperPendPyTextObject(g:python_for_pattern, 0, v:count)<cr>
+                    " autocmd FileType python vnoremap <buffer> <silent> <M-R> :<c-u>call VisualMovePyTextObject(g:python_for_pattern, 0, v:count)<cr>
+
+                " " Text Object Selection
+
+                    " autocmd FileType python onoremap <buffer> <silent> ir :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                    " autocmd FileType python onoremap <buffer> <silent> ar :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+
+                    " autocmd FileType python vnoremap <buffer> <silent> ir :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                    " autocmd FileType python vnoremap <buffer> <silent> ar :<c-u>call InnerOuterPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+
+                    " autocmd FileType python onoremap <buffer> <silent> iR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                    " autocmd FileType python onoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+
+                    " autocmd FileType python vnoremap <buffer> <silent> iR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
+                    " autocmd FileType python vnoremap <buffer> <silent> aR :<c-u>call InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
