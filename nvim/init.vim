@@ -47,9 +47,11 @@
     set splitbelow              " the default split direction will be at the bottom
     set mouse=a                 " enable mouse support (selection, resize).
     set tags=tags               " enable ctags
+    set clipboard+=unnamedplus
 
     if has('cscope')
-        set cscopetag cscopeverbose
+        set cscopetag 
+        set nocscopeverbose
         set csto=1                  " check ctags before cscope
 
         if has('quickfix')
@@ -68,7 +70,7 @@
             cs add cscope.out
         endif
 
-        command -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
+        command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
     endif
 
 
@@ -161,15 +163,20 @@
         endfunction"}}}
 
     " Navigation
-    nnoremap <C-J> <C-W><C-J>
-    nnoremap <C-K> <C-W><C-K>
-    nnoremap <C-L> <C-W><C-L>
-    nnoremap <C-H> <C-W><C-H>
+    nnoremap <C-j> <C-w><C-j>
+    nnoremap <C-k> <C-w><C-k>
+    nnoremap <C-l> <C-w><C-l>
+    nnoremap <C-h> <C-w><C-h>
 
-    nnoremap <M-j> 5j
-    nnoremap <M-k> 5k
-    vnoremap <M-j> 5j
-    vnoremap <M-k> 5k
+    nnoremap <M-j> <C-w>J
+    nnoremap <M-k> <C-w>K
+    nnoremap <M-l> <C-w>L
+    nnoremap <M-h> <C-w>H
+
+    nnoremap J 5j
+    nnoremap K 5k
+    vnoremap J 5j
+    vnoremap K 5k
 
     """ --- Cscope Configuration ---
 
@@ -202,6 +209,8 @@
             nnoremap <leader>oc :vsplit $MYVIMRC<CR>
             
         " -- Folding commands --
+        
+            nnoremap <leader>zz :set foldmethod=manual<CR>
         
             nnoremap <leader>z0 :set foldlevel=0<CR>
             nnoremap <leader>z1 :set foldlevel=1<CR>
@@ -900,4 +909,7 @@
                     " autocmd FileType python onoremap <buffer> <silent> aR :<c-u>call <SID>InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
 
                     " autocmd FileType python vnoremap <buffer> <silent> iR :<c-u>call <SID>InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 1)<cr>
-                    " autocmd FileType python vnoremap <buffer> <silent> aR :<c-u>call <SID>InnerOuterStatementPyTextObject(g:python_for_pattern, v:count, 0)<cr>
+                    " autocmd FileType python vnoremap <buffer> <silent> aR
+		    " :<c-u>call
+		    " <SID>InnerOuterStatementPyTextObject(g:python_for_pattern,
+		    " v:count, 0)<cr>
