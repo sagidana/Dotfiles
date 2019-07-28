@@ -618,6 +618,8 @@
                     let l:comment_syntax = "#"
                 elseif &filetype ==# 'vim'
                     let l:comment_syntax = "\""
+                elseif &filetype ==# 'conf'
+                    let l:comment_syntax = "#"
                 endif
 
                 return l:comment_syntax
@@ -888,10 +890,17 @@
 
                 execute "silent! normal! l"
 
+                let l:start_indent_level = indent(line("."))
+
                 " Got to previous for decleration
                 execute "silent! normal! ".'?\v'.a:python_statement_pattern."\r"
 
                 let l:indent_level = indent(line("."))
+
+                while l:indent_level >= l:start_indent_level
+                    execute "silent! normal! n"
+                    let l:indent_level = indent(line("."))
+                endwhile
 
                 let l:command = "jV"
                 if a:is_inner ==# 0
@@ -942,8 +951,16 @@
                 let &wrapscan = 0
                 execute "silent! normal! l"
 
+                let l:start_indent_level = indent(line("."))
+
                 " Got to previous for decleration
                 execute "silent! normal! ".'?\v'.a:python_statement_pattern."\r"
+
+                let l:indent_level = indent(line("."))
+                while l:indent_level >= l:start_indent_level
+                    execute "silent! normal! n"
+                    let l:indent_level = indent(line("."))
+                endwhile
 
                 if a:is_inner ==# 1
                     execute "silent! normal! "."w"
@@ -951,7 +968,6 @@
 
                 execute "silent! normal! "."v/:\rh"
 
-                execute "silent! normal! $"
                 " Return the user's wrapscan settings.
                 let &wrapscan=l:saved_wrapscan
             endfunction
