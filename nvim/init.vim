@@ -245,7 +245,10 @@
         
         " -- Surround Operator
 
-            nnoremap <silent> cs :call <SID>SurroundOperator()<cr>
+            nnoremap <silent> cs :call <SID>ChangeSurroundOperator()<cr>
+
+            nnoremap <silent> gs :<C-u>set operatorfunc=<SID>GoSurroundOperator<CR>g@
+            vnoremap <silent> gs :<C-u>call <SID>GoSurroundOperator(visualmode())<CR>
 
         " -- Comment Operator
 
@@ -495,7 +498,10 @@
                 endif
             endfunction
 
-            function! s:SurroundOperator()
+            function! s:ChangeSurroundOperator()
+                " Save cursor position
+                let l:saved_cursor_position = getcurpos()
+
                 " Get the character to change
                 let l:before_character = nr2char(getchar())
 
@@ -505,18 +511,16 @@
                     return
                 endif
 
-                let l:current_line = getline(line('.'))
+                " Check left side
+                if search(l:left_before_character, 'bcnWz') ==# 0
+                    return 
+                endif 
 
-                let l:left_side_of_line = l:current_line[:col('.') - 1]
-                let l:right_side_of_line = l:current_line[col('.'):]
+                " Check right side
+                if search(l:left_before_character, 'nWz') ==# 0
+                    return 
+                endif 
 
-                if match(l:right_side_of_line, '^.*'.l:right_before_character.'.*$') < 0
-                    return
-                endif
-
-                if match(l:left_side_of_line, '^.*'.l:left_before_character.'.*$') < 0
-                    return
-                endif
 
                 " Get the character to change with
                 let l:after_character = nr2char(getchar())
@@ -528,15 +532,80 @@
                     return
                 endif
 
+                " Handle the left side
+                if search(l:left_before_character, 'bcW') !=# 0
+                    execute "silent! normal! "."r".l:left_after_character
+                endif
+                
                 " Handle the right side
-                if l:current_line[col('.')] ==# l:right_before_character
+                if search(l:right_before_character, 'W') !=# 0
                     execute "silent! normal! "."r".l:right_after_character
-                else
-                    execute "silent! normal! "."f".l:right_before_character."r".l:right_after_character
                 endif
 
-                " Handle the left side
-                execute "silent! normal! "."F".l:left_before_character."r".l:left_after_character
+                call setpos('.', l:saved_cursor_position)
+            endfunctio
+
+            function! s:MainSurroundOperator(start_range, end_range)
+                let l:start = getpos(a:start_range)
+                let l:end = getpos(a:end_range)
+
+                " Set cursor to start of range
+                call setpos('.', l:start)
+
+                " Get the character to change
+                let l:surround_character = nr2char(getchar())
+
+                let l:left_surround_character = <SID>GetSidesSurroundOperator(l:surround_character)[0]
+                let l:right_surround_character = <SID>GetSidesSurroundOperator(l:surround_character)[1]
+                if l:left_surround_character ==# -1
+                    return
+                endif
+
+                execute "silent! normal! "."i".l:left_surround_character
+
+                " Set cursor to end of range
+                call setpos('.', l:end)
+
+                execute "silent! normal! "."la".l:right_surround_character
+            endfunction
+
+            function! s:GoSurroundOperator(type)
+                " Save unnamed register's content
+                let l:saved_unnamed_register = @@
+                let l:saved_cursor_position = getcurpos()
+
+                if a:type ==# 'v'
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainSurroundOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'V'
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainSurroundOperator(l:start_range, l:end_range)
+                elseif a:type ==# "\<c-v>"                          " Visuall Block mode
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainSurroundOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'line'
+                    let l:start_range = "'["
+                    let l:end_range = "']"
+
+                    call <SID>MainSurroundOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'char'
+                    let l:start_range = "'["
+                    let l:end_range = "']"
+
+                    call <SID>MainSurroundOperator(l:start_range, l:end_range)
+                endif
+
+                " Restore unnamed register's content
+                let @@ = l:saved_unnamed_register 
+
+                " Restore cursor position
+                call setpos('.', l:saved_cursor_position)
             endfunction
 
         " -- Comment Operator Implementation
