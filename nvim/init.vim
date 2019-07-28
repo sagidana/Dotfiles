@@ -844,6 +844,7 @@
                 while match(getline(line(".")), "^\\s*$") > -1
                     execute "silent! normal! k"
                 endwhile
+                execute "silent! normal! $"
             endfunction
 
         " -- Python Text Objects
@@ -928,6 +929,8 @@
                     execute "silent! normal! k"
                 endwhile
 
+                execute "silent! normal! $"
+
                 " Return the user's wrapscan settings.
                 let &wrapscan=l:saved_wrapscan
             endfunction
@@ -948,6 +951,7 @@
 
                 execute "silent! normal! "."v/:\rh"
 
+                execute "silent! normal! $"
                 " Return the user's wrapscan settings.
                 let &wrapscan=l:saved_wrapscan
             endfunction
