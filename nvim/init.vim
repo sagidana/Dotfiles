@@ -620,6 +620,8 @@
                     let l:comment_syntax = "\""
                 elseif &filetype ==# 'conf'
                     let l:comment_syntax = "#"
+                elseif &filetype ==# 'c'
+                    let l:comment_syntax = "//"
                 endif
 
                 return l:comment_syntax
@@ -649,6 +651,7 @@
                 let l:comment_pattern_1 = l:comment."\\s"
                 let l:comment_pattern_2 = l:comment."\\w\\+"
 
+                let l:delete_legnth = strlen(l:comment) + 1
                 let l:found_index_pattern_1 = match(l:line, l:comment_pattern_1) 
                 let l:found_index_pattern_2 = match(l:line, l:comment_pattern_2) 
 
@@ -664,17 +667,17 @@
                     let l:found_index = match(l:line, l:comment_pattern_1)
 
                     if l:found_index ==# 0
-                        let l:line = l:line[2:]
+                        let l:line = l:line[l:delete_legnth:]
                     elseif l:found_index > 0
-                        let l:line = l:line[:l:found_index - 1].l:line[l:found_index + 2:]
+                        let l:line = l:line[:l:found_index - 1].l:line[l:found_index + l:delete_legnth:]
                     endif
                 else
                     let l:found_index = match(l:line, l:comment_pattern_2)
 
                     if l:found_index ==# 0
-                        let l:line = l:line[1:]
+                        let l:line = l:line[l:delete_legnth - 1:]
                     elseif l:found_index > 0
-                        let l:line = l:line[:l:found_index - 1].l:line[l:found_index + 1:]
+                        let l:line = l:line[:l:found_index - 1].l:line[l:found_index + l:delete_legnth  - 1:]
                     endif
                 endif
 
@@ -833,14 +836,15 @@
 
                     if l:inner_indent_level < l:indent_level
                         if match(getline(line(".")), "^\\s*$") < 0
+                            execute "silent! normal! k"
                             break
                         endif
                     endif
                 endwhile
 
-                if l:is_end_of_file ==# 0
-                    execute "silent! normal! k"
-                endif
+                " if l:is_end_of_file ==# 0
+                    " execute "silent! normal! k"
+                " endif
 
                 " Keep up until not an empty line
                 while match(getline(line(".")), "^\\s*$") > -1
