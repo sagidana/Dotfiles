@@ -1121,7 +1121,6 @@
 		    " <SID>InnerOuterStatementPyTextObject(g:python_for_pattern,
 		    " v:count, 0)<cr>
 
-
         " -- C Text  Objects
 
             function! s:NormalMoveCTextObject(c_statement_pattern, to_next, count)
@@ -1195,6 +1194,14 @@
 
                 let &whichwrap = "lh"
                 if a:is_inner
+                    " get current line
+                    let l:line = getline('.')
+
+                    if match(l:line, "^.*().*$") >= 0
+                        " Add space between the parenthesis
+                        execute "silent! normal! f(a \<esc>0"
+                    endif 
+
                     execute "silent! normal! f(lvh%h"
                 else
                     execute "silent! normal! ^vf(%"
