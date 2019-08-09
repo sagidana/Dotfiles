@@ -469,6 +469,120 @@
                     autocmd FileType python vnoremap <buffer> <silent> iM :<c-u>call <SID>InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 1)<cr>
                     autocmd FileType python vnoremap <buffer> <silent> aM :<c-u>call <SID>InnerOuterStatementPyTextObject(g:python_method_pattern, v:count, 0)<cr>
 
+        " -- C Text Objects
+            
+            " C for loop text object
+
+                let g:c_for_pattern = "^\\s*for\\s+(.*).*$"
+
+                " Motion
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-r> :<c-u>call <SID>NormalMoveCTextObject(g:c_for_pattern, 1, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-r> :call <SID>OperPendCTextObject(g:c_for_pattern, 1, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-r> :<c-u>call <SID>VisualMoveCTextObject(g:c_for_pattern, 1, v:count)<cr>
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-R> :<c-u>call <SID>NormalMoveCTextObject(g:c_for_pattern, 0, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-R> :call <SID>OperPendCTextObject(g:c_for_pattern, 0, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-R> :<c-u>call <SID>VisualMoveCTextObject(g:c_for_pattern, 0, v:count)<cr>
+
+                " Text Object Selection
+
+                    autocmd FileType c onoremap <buffer> <silent> ir :<c-u>call <SID>InnerOuterCTextObject(g:c_for_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> ar :<c-u>call <SID>InnerOuterCTextObject(g:c_for_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> ir :<c-u>call <SID>InnerOuterCTextObject(g:c_for_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> ar :<c-u>call <SID>InnerOuterCTextObject(g:c_for_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c onoremap <buffer> <silent> iR :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_for_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> aR :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_for_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> iR :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_for_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> aR :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_for_pattern, v:count, 0)<cr>
+
+            " C while loop text object
+
+                let g:c_while_pattern = "^\\s*while\\s+(.*).*$"
+
+                " Motion
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-e> :<c-u>call <SID>NormalMoveCTextObject(g:c_while_pattern, 1, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-e> :call <SID>OperPendCTextObject(g:c_while_pattern, 1, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-e> :<c-u>call <SID>VisualMoveCTextObject(g:c_while_pattern, 1, v:count)<cr>
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-E> :<c-u>call <SID>NormalMoveCTextObject(g:c_while_pattern, 0, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-E> :call <SID>OperPendCTextObject(g:c_while_pattern, 0, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-E> :<c-u>call <SID>VisualMoveCTextObject(g:c_while_pattern, 0, v:count)<cr>
+
+                " Text Object Selection
+
+                    autocmd FileType c onoremap <buffer> <silent> ie :<c-u>call <SID>InnerOuterCTextObject(g:c_while_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> ae :<c-u>call <SID>InnerOuterCTextObject(g:c_while_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> ie :<c-u>call <SID>InnerOuterCTextObject(g:c_while_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> ae :<c-u>call <SID>InnerOuterCTextObject(g:c_while_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c onoremap <buffer> <silent> iE :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_while_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> aE :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_while_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> iE :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_while_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> aE :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_while_pattern, v:count, 0)<cr>
+
+            " C if text object
+
+                let g:c_if_pattern = "^\\s*if\\s+(.*).*$"
+
+                " Motion
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-f> :<c-u>call <SID>NormalMoveCTextObject(g:c_if_pattern, 1, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-f> :call <SID>OperPendCTextObject(g:c_if_pattern, 1, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-f> :<c-u>call <SID>VisualMoveCTextObject(g:c_if_pattern, 1, v:count)<cr>
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-F> :<c-u>call <SID>NormalMoveCTextObject(g:c_if_pattern, 0, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-F> :call <SID>OperPendCTextObject(g:c_if_pattern, 0, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-F> :<c-u>call <SID>VisualMoveCTextObject(g:c_if_pattern, 0, v:count)<cr>
+
+                " Text Object Selection
+
+                    autocmd FileType c onoremap <buffer> <silent> if :<c-u>call <SID>InnerOuterCTextObject(g:c_if_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> af :<c-u>call <SID>InnerOuterCTextObject(g:c_if_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> if :<c-u>call <SID>InnerOuterCTextObject(g:c_if_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> af :<c-u>call <SID>InnerOuterCTextObject(g:c_if_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c onoremap <buffer> <silent> iF :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_if_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> aF :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_if_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> iF :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_if_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> aF :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_if_pattern, v:count, 0)<cr>
+
+            " C function text object
+
+                let g:c_func_pattern = "^\\s*\\w+\\s+[a-zA-Z0-9_\-]+(.*).*$"
+
+                " Motion
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-m> :<c-u>call <SID>NormalMoveCTextObject(g:c_func_pattern, 1, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-m> :call <SID>OperPendCTextObject(g:c_func_pattern, 1, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-m> :<c-u>call <SID>VisualMoveCTextObject(g:c_func_pattern, 1, v:count)<cr>
+
+                    autocmd FileType c nnoremap <buffer> <silent> <M-M> :<c-u>call <SID>NormalMoveCTextObject(g:c_func_pattern, 0, v:count)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> <M-M> :call <SID>OperPendCTextObject(g:c_func_pattern, 0, v:count)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> <M-M> :<c-u>call <SID>VisualMoveCTextObject(g:c_func_pattern, 0, v:count)<cr>
+
+                " Text Object Selection
+
+                    autocmd FileType c onoremap <buffer> <silent> im :<c-u>call <SID>InnerOuterCTextObject(g:c_func_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> am :<c-u>call <SID>InnerOuterCTextObject(g:c_func_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> im :<c-u>call <SID>InnerOuterCTextObject(g:c_func_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> am :<c-u>call <SID>InnerOuterCTextObject(g:c_func_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c onoremap <buffer> <silent> iM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 1)<cr>
+                    autocmd FileType c onoremap <buffer> <silent> aM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 0)<cr>
+
+                    autocmd FileType c vnoremap <buffer> <silent> iM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 1)<cr>
+                    autocmd FileType c vnoremap <buffer> <silent> aM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 0)<cr>
+
 
 """ ---- Custom Plugins ----
 
@@ -1006,3 +1120,87 @@
 		    " :<c-u>call
 		    " <SID>InnerOuterStatementPyTextObject(g:python_for_pattern,
 		    " v:count, 0)<cr>
+
+
+        " -- C Text  Objects
+
+            function! s:NormalMoveCTextObject(c_statement_pattern, to_next, count)
+                " Save the user's wrapscan settings.
+                let l:saved_wrapscan = &wrapscan
+
+                let &wrapscan = 0
+
+                let l:direction = '/'
+                if a:to_next ==# 0
+                    let l:direction = '?'
+                endif
+
+                execute "silent! normal! ".l:direction.'\v'.a:c_statement_pattern."\r"
+
+                " Repeat the search \<count\> times.
+                execute "silent! normal! ".repeat("n", a:count - 1)
+                
+                " Return the user's wrapscan settings.
+                let &wrapscan=l:saved_wrapscan
+            endfunction
+
+            function! s:VisualMoveCTextObject(c_statement_pattern, to_next, count)
+                normal! gv
+                call <SID>NormalMoveCTextObject(a:c_statement_pattern, a:to_next, a:count)
+            endfunction
+
+            function! s:OperPendCTextObject(c_statement_pattern, to_next, count)
+                normal! v
+                call NormalMoveCTextObject(a:c_statement_pattern, a:to_next, a:count)
+                normal! k$
+            endfunction
+
+            function! s:InnerOuterCTextObject(c_statement_pattern, count, is_inner)
+                " Save the user's wrapscan settings.
+                let l:saved_wrapscan = &wrapscan
+
+                let &wrapscan = 0
+
+                execute "silent! normal! $"
+
+                " Got to previous for decleration
+                execute "silent! normal! ".'?\v'.a:c_statement_pattern."\r"
+
+                let &whichwrap = "lh"
+                if a:is_inner
+                    execute "silent! normal! ".'/\v'.'\{'."\r"
+                    execute "silent! normal! lv"
+                    execute "silent! normal! h%h"
+                else
+                    execute "silent! normal! ^v"
+                    execute "silent! normal! ".'/\v'.'\{'."\r"
+                    execute "silent! normal! %"
+                endif
+                let &whichwrap = ""
+
+                " Return the user's wrapscan settings.
+                let &wrapscan=l:saved_wrapscan
+            endfunction
+
+            function! s:InnerOuterStatementCTextObject(c_statement_pattern, count, is_inner)
+                " Save the user's wrapscan settings.
+                let l:saved_wrapscan = &wrapscan
+
+                let &wrapscan = 0
+
+                execute "silent! normal! $"
+
+                " Got to previous for decleration
+                execute "silent! normal! ".'?\v'.a:c_statement_pattern."\r"
+
+                let &whichwrap = "lh"
+                if a:is_inner
+                    execute "silent! normal! f(lvh%h"
+                else
+                    execute "silent! normal! ^vf(%"
+                endif
+                let &whichwrap = ""
+
+                " Return the user's wrapscan settings.
+                let &wrapscan=l:saved_wrapscan
+            endfunction
