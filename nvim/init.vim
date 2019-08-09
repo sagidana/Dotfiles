@@ -557,7 +557,7 @@
 
             " C function text object
 
-                let g:c_func_pattern = "^\\s*\\w+\\s+[a-zA-Z0-9_\-]+(.*).*$"
+                let g:c_func_pattern = "^\\s*\\w+\\s+[a-zA-Z0-9_\-]+\\(.*\\).*$"
 
                 " Motion
 
