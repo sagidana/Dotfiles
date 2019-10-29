@@ -15,3 +15,4 @@ PS1='[\u@\h \W]\$ '
 # Needs to be emacs??? ^^
 VISUAL=nvim; export VISUAL EDITOR=nvim; export EDITOR
 
+source ~/git-completion.bash
