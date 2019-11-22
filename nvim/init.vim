@@ -19,9 +19,6 @@
         " Fuzzy finder files
         Plugin 'junegunn/fzf'
 
-        " Table mode, for creating and modifying tables
-        Plugin 'dhruvasagar/vim-table-mode'
-
     """ ---- Plugins end here ----
 
     " All of your Plugins must be added before the following line
@@ -109,38 +106,6 @@
     colorscheme one
 
 
-""" ---- Table mode configuration ----
-
-    " Send bindings to black hole!
-    " Disabl default mappings used by the plugin.
-    let g:table_mode_tableize_op_map='<F2>'
-    let g:table_mode_tableize_map='<F2>'
-
-
-""" ---- Deoplete Configuration ----
-
-    " Enable deoplete.
-    let g:deoplete#enable_at_startup = 1
-    
-    " Disable autocomplete
-    call deoplete#custom#option('auto_complete', v:false)
-
-
-""" ---- Netrw Configuration ----
-
-    " Disable banner
-    let g:netrw_banner = 0
-
-    " Setting the width of the window to be 25%
-    let g:netrw_winsize = 20
-
-    " Setting the directroy view type.
-    let g:netrw_liststyle = 3
-
-    " Open selected in the brevious window
-    let g:netrw_browse_split = 4
-
-
 """ ---- Bindings ----
 
     " Disable search highlights until next search at <esc> press.
@@ -151,16 +116,6 @@
 
     " Bind <C-i> to <M-o>
     nnoremap <M-o> <C-i>
-
-    " CTRL-Space for manually auto complete
-    inoremap <silent><expr> <C-Space> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<C-Space>" : deoplete#manual_complete()
-
-    "" Deoplete binding helper function
-
-        function! s:check_back_space() abort "{{{
-            let col = col('.') - 1
-            return !col || getline('.')[col - 1]  =~ '\s'
-        endfunction"}}}
 
     " Navigation
     nnoremap <C-j> <C-w><C-j>
@@ -188,11 +143,6 @@
         nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
         nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
         nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-
-    """ --- Netrw Configuration ---
-
-        " Making tab open folders instead of Enter
-        autocmd filetype netrw nmap <buffer> <TAB> <CR>
 
     """ --- Leader configuration ---
 
@@ -224,12 +174,6 @@
             nnoremap <leader>z9 :set foldlevel=9<CR>
 
         " -- Toggle commands --
-
-            " [Toggle Netrw]
-            nnoremap <leader>tn :Lexplore<CR>
-        
-            " [Toggle Table Mode] TableMode toggle!
-            nnoremap <leader>tm :TableModeToggle<CR>
 
         " -- Search commands --
            
