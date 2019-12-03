@@ -694,7 +694,6 @@
 
                 let l:line = l:comment." ".l:line
 
-                endif
                 cal setline(a:lnum, l:line)
             endfunction
 
