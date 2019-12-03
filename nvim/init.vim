@@ -2,16 +2,13 @@
 
     filetyp off
 
-    set rtp+=~/.config/nvim/bundle/Vundle.vim
-    call vundle#begin('~/.config/nvim/bundle')
+    set rtp+=$HOME/AppData/Local/nvim/bundle/Vundle.vim
+    call vundle#begin('$HOME/AppData/Local/nvim/bundle/')
 
     " let Vundle manage Vundle, required
     Plugin 'VundleVim/Vundle.vim'
 
     """ ---- Plugins start here ----
-
-        " Auto completion
-        Plugin 'shougo/deoplete.nvim' 
 
         " Colorschemes
         Plugin 'rakr/vim-one'
@@ -695,10 +692,8 @@
 
                 let l:comment = <SID>GetCommentSyntaxCommentOperator()
 
-                if indent(a:lnum) ==# 0
-                    let l:line = l:comment." ".l:line
-                else
-                    let l:line = l:line[:indent(a:lnum) - 1].l:comment." ".l:line[indent(a:lnum):]
+                let l:line = l:comment." ".l:line
+
                 endif
                 cal setline(a:lnum, l:line)
             endfunction
