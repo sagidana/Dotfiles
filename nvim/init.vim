@@ -694,9 +694,8 @@
 
                 let l:comment = <SID>GetCommentSyntaxCommentOperator()
 
-                let l:line = l:comment." ".l:line
-
-                cal setline(a:lnum, l:line)
+                " Setting the comment after all the whitespaces.
+                call setline(a:lnum, substitute(l:line, '^\(\s*\)',  "\\1". l:comment." ", 'g'))
             endfunction
 
             function! s:UncommentLineCommentOperator(lnum)
