@@ -10,8 +10,8 @@
 
     """ ---- Plugins start here ----
 
-        " Colorschemes
-        Plugin 'rakr/vim-one'
+        " RipGrep
+        Plugin 'jremmen/vim-ripgrep'
 
         " Fuzzy finder files
         Plugin 'junegunn/fzf'
@@ -82,27 +82,28 @@
 
 """ ---- Colorscheme! ----
 
-"     "Credit joshdick
-"     "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
-"     "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
-"     "(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
-"     if (empty($TMUX))
-"       if (has("nvim"))
-"       "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-"       let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-"       endif
-"       "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-"       "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-"       " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-"       if (has("termguicolors"))
-"         set termguicolors
-"       endif
-"     endif
+    colorscheme default
+
+    " "Credit joshdick
+    " "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+    " "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+    " "(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+    " if (empty($TMUX))
+      " if (has("nvim"))
+      " "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+      " let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+      " endif
+      " "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+      " "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+      " " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+      " if (has("termguicolors"))
+        " set termguicolors
+      " endif
+    " endif
 
 
-"     set background=dark " for the dark version
-" "     set background=light " for the light version
-"     colorscheme one
+    " set background=dark " for the dark version
+    " set background=light " for the light version
 
 
 """ ---- Bindings ----
@@ -116,6 +117,12 @@
     " Bind <C-i> to <M-o>
     nnoremap <M-o> <C-i>
 
+    " Resizing
+    nnoremap <C-Up> :resize +6<CR>
+    nnoremap <C-Down> :resize -6<CR>
+    nnoremap <C-Right> :vertical resize +6<CR>
+    nnoremap <C-Left> :vertical resize -6<CR>
+
     " Navigation
     nnoremap <C-j> <C-w><C-j>
     nnoremap <C-k> <C-w><C-k>
@@ -127,10 +134,10 @@
     nnoremap <M-l> <C-w>L
     nnoremap <M-h> <C-w>H
 
-    nnoremap J 5j
-    nnoremap K 5k
-    vnoremap J 5j
-    vnoremap K 5k
+    nnoremap J 4j
+    nnoremap K 4k
+    vnoremap J 4j
+    vnoremap K 4k
 
     """ --- Cscope Configuration ---
 
