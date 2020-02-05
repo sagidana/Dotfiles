@@ -133,7 +133,7 @@ bar {
 }
 
 
-bindsym --release $mod+Print exec "scrot -s ~/Pictures/screenshot.png"
+bindsym --release $mod+Print exec "scrot -o -s ~/Pictures/screenshot.png"
 
 # # Disable title bars on windows
 # for_window [class="^.*"] border pixel 0
