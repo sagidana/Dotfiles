@@ -1,20 +1,24 @@
 """ ---- Vundle configuration ----  
 
     filetyp off
-
-    set rtp+=~/.config/nvim/bundle/Vundle.vim
-    call vundle#begin('~/.config/nvim/bundle')
+    if has("win32")
+        set rtp+=$HOME/AppData/Local/nvim/bundle/Vundle.vim
+        call vundle#begin('$HOME/AppData/Local/nvim/bundle')
+    else
+        set rtp+=~/.config/nvim/bundle/Vundle.vim
+        call vundle#begin('~/.config/nvim/bundle')
+    endif
 
     " let Vundle manage Vundle, required
     Plugin 'VundleVim/Vundle.vim'
 
     """ ---- Plugins start here ----
 
-        " RipGrep
-        Plugin 'jremmen/vim-ripgrep'
+        " " RipGrep
+        " Plugin 'jremmen/vim-ripgrep'
 
-        " Fuzzy finder files
-        Plugin 'junegunn/fzf'
+        " " Fuzzy finder files
+        " Plugin 'junegunn/fzf'
 
     """ ---- Plugins end here ----
 
@@ -24,7 +28,7 @@
 
 """ ---- General configuration ---- 
 
-    set nocompatible            " Disable compatibility to old-time vi
+    set nocompatible               " Disable compatibility to old-time vi
     set showmatch               " Show matching brackets.
     set hlsearch                " highlight search results
     set incsearch               " highlight saerch results while searching.
@@ -184,7 +188,10 @@
         " -- Search commands --
            
             " [Search File] 
-            nnoremap <leader>sf :FZF<CR>
+            nnoremap <leader>sf :call <SID>FZFLaunch()<CR>
+
+            " [Search Content in files] 
+            nnoremap <leader>sc :call <SID>RipGrepLaunch()<CR>
 
         " -- Buffer commands --
             
@@ -535,6 +542,102 @@
 
 
 """ ---- Custom Plugins ----
+
+    " --- Terminals Applicaitons ---
+        
+        " --- Common ---
+        
+            let g:terminal_buf_id = -1
+            let g:terminal_content = []
+            let g:terminal_on_exit_execute_code = "silent! normal! ".":echo 'nothing to do!'"."\r"
+
+            function! TerminalOnExit(job_id, code, event)
+                let g:terminal_content = nvim_buf_get_lines(g:terminal_id, 0, -1, 0)
+                
+                " close the terminal buffer after exit.
+                close
+
+                if a:code == 0
+                    " execute the code wanted by caller
+                    execute g:terminal_on_exit_execute_code
+                endif
+            endfunction
+
+            function! TerminalLaunch(cmd, on_exit_code)
+                " spliting the window for the terminal
+                split
+                " creating ne buffer for the terminal to go into.
+                enew
+                " saving the number of the buffer of the terminal
+                " for the close operation
+                let g:terminal_id = bufnr("%")
+
+                " setting the code to be run once the terminal exits.
+                " TODO: check if there is code in the argument.
+                let g:terminal_on_exit_execute_code = a:on_exit_code
+
+                " launching the terminal witht he command
+                call termopen(a:cmd, {'on_exit': "TerminalOnExit"})
+
+                " entering insert mode after the terminal is launched.
+                normal i
+            endfunction
+
+        " --- FZF ---
+
+            function! FZFOnExit()
+                execute "silent! normal! ".":e ".g:terminal_content[0]."\r"
+            endfunction
+
+            function! s:FZFLaunch()
+                call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r")
+            endfunction
+
+        " --- Rig Grep ---
+
+            function! RipGrepOnExit()
+                let l:newqflist = []
+                let l:ripgrep_line = ""
+
+                " Setting the quickfix list with the ripgrep results
+                for l:ripgrep_line in g:terminal_content
+                    " check if the line is in the correct format
+                    if match(l:ripgrep_line, "^.*:\\d\\+:\\d\\+:.*$") < 0
+                        continue
+                    endif
+
+                    let l:file_path = split(l:ripgrep_line, ':')[0]
+                    let l:file_line = split(l:ripgrep_line, ':')[1]
+                    let l:file_column = split(l:ripgrep_line, ':')[2]
+                    let l:text = split(l:ripgrep_line, ':')[3]
+
+                    " adding new entry to the new quickfix list
+                    call add(l:newqflist, {
+                                \ 'filename': l:file_path,
+                                \ 'lnum': l:file_line,
+                                \ 'text': l:text
+                                \ })
+                endfor
+
+                " setting the new quick fix list with the ripgrep resutls!
+                call setqflist(l:newqflist)
+
+                " open quickfix list in case there are results
+                if len(l:newqflist) > 0
+                    execute "silent! normal! :cw\r"
+                endif
+            endfunction
+
+            function! s:RipGrepLaunch()
+                call inputsave()
+                let l:to_search = input("search for: ")
+                call inputrestore()
+
+                if len(l:to_search) > 0
+                    " TODO regex and stuff...
+                    call TerminalLaunch("rg --vimgrep \"".l:to_search."\"", "silent! normal! :call RipGrepOnExit()\r")
+                endif
+            endfunction
 
     " --- Operators ---
 
