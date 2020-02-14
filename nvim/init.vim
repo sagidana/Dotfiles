@@ -563,18 +563,24 @@
                 endif
             endfunction
 
-            function! TerminalLaunch(cmd, on_exit_code)
+            function! TerminalLaunch(cmd, on_exit_code, is_vertical)
                 " spliting the window for the terminal
-                split
+                if a:is_vertical
+                    vsplit
+                else
+                    split
+                endif
+
                 " creating ne buffer for the terminal to go into.
                 enew
                 " saving the number of the buffer of the terminal
                 " for the close operation
                 let g:terminal_id = bufnr("%")
 
-                " setting the code to be run once the terminal exits.
-                " TODO: check if there is code in the argument.
-                let g:terminal_on_exit_execute_code = a:on_exit_code
+                if len(a:on_exit_code) > 0
+                    " setting the code to be run once the terminal exits.
+                    let g:terminal_on_exit_execute_code = a:on_exit_code
+                endif
 
                 " launching the terminal witht he command
                 call termopen(a:cmd, {'on_exit': "TerminalOnExit"})
@@ -590,7 +596,7 @@
             endfunction
 
             function! s:FZFLaunch()
-                call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r")
+                call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r", 0)
             endfunction
 
         " --- Rig Grep ---
@@ -635,7 +641,7 @@
 
                 if len(l:to_search) > 0
                     " TODO regex and stuff...
-                    call TerminalLaunch("rg --vimgrep \"".l:to_search."\"", "silent! normal! :call RipGrepOnExit()\r")
+                    call TerminalLaunch("rg --vimgrep \"".l:to_search."\"", "silent! normal! :call RipGrepOnExit()\r", 1)
                 endif
             endfunction
 
