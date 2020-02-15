@@ -636,12 +636,11 @@
 
             function! s:RipGrepLaunch()
                 call inputsave()
-                let l:to_search = input("search for: ")
+                let l:to_search = input("rg --vimgrep ")
                 call inputrestore()
 
                 if len(l:to_search) > 0
-                    " TODO regex and stuff...
-                    call TerminalLaunch("rg --vimgrep \"".l:to_search."\"", "silent! normal! :call RipGrepOnExit()\r", 1)
+                    call TerminalLaunch("rg --vimgrep ".l:to_search, "silent! normal! :call RipGrepOnExit()\r", 1)
                 endif
             endfunction
 
