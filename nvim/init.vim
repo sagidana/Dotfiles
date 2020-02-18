@@ -14,11 +14,6 @@
 
     """ ---- Plugins start here ----
 
-        " " RipGrep
-        " Plugin 'jremmen/vim-ripgrep'
-
-        " " Fuzzy finder files
-        " Plugin 'junegunn/fzf'
 
     """ ---- Plugins end here ----
 
@@ -548,6 +543,7 @@
         " --- Common ---
         
             let g:terminal_buf_id = -1
+            let g:terminal_ignore_exit_code = 0
             let g:terminal_content = []
             let g:terminal_on_exit_execute_code = "silent! normal! ".":echo 'nothing to do!'"."\r"
 
@@ -557,18 +553,22 @@
                 " close the terminal buffer after exit.
                 close
 
-                if a:code == 0
-                    " execute the code wanted by caller
-                    execute g:terminal_on_exit_execute_code
+                if g:terminal_ignore_exit_code == 0
+                    if a:code == 0
+                        " execute the code wanted by caller
+                        execute g:terminal_on_exit_execute_code
+                    endif
                 endif
             endfunction
 
-            function! TerminalLaunch(cmd, on_exit_code, is_vertical)
+            function! TerminalLaunch(cmd, on_exit_code, launch_type, ignore_exit_code)
                 " spliting the window for the terminal
-                if a:is_vertical
-                    vsplit
-                else
+                if a:launch_type == 0
                     split
+                elseif a:launch_type == 1
+                    vsplit
+                elseif a:launch_type == 2
+                    tabnew
                 endif
 
                 " creating ne buffer for the terminal to go into.
@@ -576,6 +576,7 @@
                 " saving the number of the buffer of the terminal
                 " for the close operation
                 let g:terminal_id = bufnr("%")
+                let g:terminal_ignore_exit_code = a:ignore_exit_code
 
                 if len(a:on_exit_code) > 0
                     " setting the code to be run once the terminal exits.
@@ -596,7 +597,7 @@
             endfunction
 
             function! s:FZFLaunch()
-                call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r", 0)
+                call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r", 0, 0)
             endfunction
 
         " --- Rig Grep ---
@@ -640,7 +641,7 @@
                 call inputrestore()
 
                 if len(l:to_search) > 0
-                    call TerminalLaunch("rg --vimgrep ".l:to_search, "silent! normal! :call RipGrepOnExit()\r", 1)
+                    call TerminalLaunch("rg --vimgrep ".l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1)
                 endif
             endfunction
 
