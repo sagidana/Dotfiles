@@ -558,6 +558,8 @@
                         " execute the code wanted by caller
                         execute g:terminal_on_exit_execute_code
                     endif
+                else
+                    execute g:terminal_on_exit_execute_code
                 endif
             endfunction
 
