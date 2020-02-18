@@ -647,6 +647,71 @@
                 endif
             endfunction
 
+    " --- Motion ---
+        
+        function! IsCandidate(matches, line_number, col_number)
+            " if the first run always return true
+            if a:matches[0][0] == -1
+                return a:col_number
+            endif
+
+            for l:_match in a:matches
+                if l:_match[0] == a:line_number && l:_match[2] + 1 == a:col_number
+                    return _match[1]
+                endif
+            endfor
+            return -1
+        endfunction
+
+        function! ExpandMatches(lines, matches)
+            for l:_match in a:matches
+                let l:curr_line = a:lines[l:_match[0]]
+                echo l:curr_line[l:_match[1]:]
+            endfor
+        endfunction
+
+        function! SearchLines(lines, char, prev_matches)
+            let l:results = []
+            let l:line_number = 0
+            let l:col_number = 0
+
+            for l:_line in a:lines
+                let l:col_number = 0
+                for l:_char in split(_line, '\zs')
+                    let l:start_col_of_candidate = IsCandidate(a:prev_matches, l:line_number, l:col_number)
+                    if l:start_col_of_candidate != -1
+                        if l:_char == a:char
+                            " adding the location of the match
+                            call add(l:results, [l:line_number, l:start_col_of_candidate, l:col_number])
+                        endif
+                    endif
+                    let l:col_number += 1
+                endfor
+                let l:line_number += 1
+            endfor
+            return l:results
+        endfunction
+
+        function! Motion()
+            " line number, start column number, end column number
+            let l:matches = [[-1,-1,-1]]
+
+            let l:start_line = line('w0')
+            let l:end_line = line('w$')
+
+            let l:visible_lines = nvim_buf_get_lines(0, l:start_line - 1, l:end_line, 0)
+            let l:user_char = nr2char(getchar())
+            let l:matches = SearchLines(l:visible_lines, l:user_char, l:matches)
+            call ExpandMatches(l:visible_lines, l:matches)
+            " if len(l:matches) > 0
+                " echom len(l:matches)
+                " let l:user_char = nr2char(getchar())
+                " let l:matches = SearchLines(l:visible_lines, l:user_char, l:matches)
+                " echom len(l:matches)
+            " endif
+
+        endfunction
+    
     " --- Operators ---
 
         " -- Surround Operator Implementation
@@ -1268,3 +1333,4 @@
                 " Return the user's wrapscan settings.
                 let &wrapscan=l:saved_wrapscan
             endfunction
+
