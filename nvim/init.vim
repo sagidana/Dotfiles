@@ -760,7 +760,7 @@
                     if len(l:duplicates) == 0
                         break
                     endif
-                    call setpos('.', [0, l:start_line + l:duplicates[0][0], l:duplicates[1][1], 0 ])
+                    call setpos('.', [0, l:start_line + l:duplicates[0][0], l:duplicates[0][1], 0 ])
                     break
                 endif
 
