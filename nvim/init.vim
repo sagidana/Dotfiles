@@ -650,10 +650,10 @@
 
                 let l:pattern = "\\%".l:line."l\\%>".l:col_start."c\\%<".l:col_end."c"
                 " echo l:pattern
-                call matchadd('Jumper_1', l:pattern)
+                call matchadd('Jumper_1', l:pattern, 1)
 
                 let l:pattern = "\\%".l:line."l\\%".l:col_end."c"
-                call matchadd('Jumper_2', l:pattern)
+                call matchadd('Jumper_2', l:pattern, 2)
             endfor
 
             " make the highlights changes to take effect
@@ -711,12 +711,15 @@
                     endif
                 endfor
 
-                if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
-                    call add(l:duplicates, [l:_match[0], l:_match[1]])
-                else
-                    " adding the new expanded match
-                    call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
-                endif
+                " adding the new expanded match
+                call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+
+                " if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
+                    " call add(l:duplicates, [l:_match[0], l:_match[1]])
+                " else
+                    " " adding the new expanded match
+                    " call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                " endif
             endfor
             return [l:new_matches, l:duplicates]
         endfunction
