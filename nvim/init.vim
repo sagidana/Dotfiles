@@ -14,8 +14,6 @@
 
     """ ---- Plugins start here ----
 
-        " colorscheme
-        " Plugin 'flrnd/candid.vim'
 
     """ ---- Plugins end here ----
 
@@ -38,6 +36,7 @@
     set number                  " add line numbers
     " set relativenumber          " setting relative numbers
     set foldmethod=indent       " setting folding to indentations
+    set foldlevel=20            " unfold all folds by default
     set splitright              " split to the right.
     set splitbelow              " the default split direction will be at the bottom
     set mouse=a                 " enable mouse support (selection, resize).
@@ -123,6 +122,7 @@
     vnoremap J 4j
     vnoremap K 4k
 
+    " change s to the jumper plugin
     nnoremap <silent> s :call <SID>Jumper()<cr>
 
     """ --- Cscope Configuration ---
