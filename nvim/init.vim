@@ -656,7 +656,7 @@
             endif
 
             for l:_match in a:matches
-                if l:_match[0] == a:line_number && l:_match[2] + 1 == a:col_number
+                if l:_match[0] == a:line_number && l:_match[2] == a:col_number
                     return _match[1]
                 endif
             endfor
@@ -664,16 +664,55 @@
         endfunction
 
         function! ExpandMatches(lines, matches)
+            let l:new_matches = []
+            let l:duplicates = []
             for l:_match in a:matches
-                let l:curr_line = a:lines[l:_match[0]]
-                echo l:curr_line[l:_match[1]:]
+                let l:_match_str = a:lines[l:_match[0]][l:_match[1]:]
+
+                let l:longest_match = 0
+                let l:multiple_matches = 0
+                for l:__match in a:matches
+
+                    " ignore if the same match
+                    if l:__match[0] == l:_match[0] && l:__match[1] == l:_match[1] && l:__match[2] == l:__match[2]
+                        continue
+                    endif
+
+                    let l:__match_str = a:lines[l:__match[0]][l:__match[1]:]
+
+                    let l:current_match_len = 0
+
+                    let l:loop_len = len(l:_match_str)
+                    let l:loop_index = 0
+                    while l:loop_index < l:loop_len
+                        if l:_match_str[l:loop_index] != l:__match_str[l:loop_index]
+                            break
+                        endif
+                        let l:current_match_len += 1
+                        let l:loop_index += 1
+                    endwhile
+
+                    if l:current_match_len > l:longest_match
+                        let l:longest_match = l:current_match_len
+                        let l:multiple_matches = 0
+                    elseif l:current_match_len == l:longest_match && l:__match_str[l:loop_index] == l:_match_str[l:loop_index]
+                        let l:multiple_matches = 1
+                    endif
+                endfor
+
+                if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
+                    call add(l:duplicates, [l:_match[0], l:_match[1]])
+                else
+                    " adding the new expanded match
+                    call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                endif
             endfor
+            return [l:new_matches, l:duplicates]
         endfunction
 
         function! SearchLines(lines, char, prev_matches)
             let l:results = []
             let l:line_number = 0
-            let l:col_number = 0
 
             for l:_line in a:lines
                 let l:col_number = 0
@@ -699,10 +738,41 @@
             let l:start_line = line('w0')
             let l:end_line = line('w$')
 
+            let l:duplicates = [[line('.') - l:start_line, col('.')]]
+
             let l:visible_lines = nvim_buf_get_lines(0, l:start_line - 1, l:end_line, 0)
-            let l:user_char = nr2char(getchar())
-            let l:matches = SearchLines(l:visible_lines, l:user_char, l:matches)
-            call ExpandMatches(l:visible_lines, l:matches)
+
+            while 1
+                let l:user_char_number = getchar()
+                " if user escapes
+                if l:user_char_number == 27
+                    call setpos('.', [0, l:start_line + l:duplicates[0][0], l:duplicates[1][1], 0 ])
+                    break
+                endif
+                let l:user_char = nr2char(l:user_char_number)
+
+                let l:matches = SearchLines(l:visible_lines, l:user_char, l:matches)
+
+                let l:expand_result = ExpandMatches(l:visible_lines, l:matches)
+
+                let l:matches = l:expand_result[0]
+                let l:duplicates = l:expand_result[1]
+
+                " if found move cursor
+                if len(l:matches) == 1
+                    echo "Found!"
+                    call setpos('.', [0, l:start_line + l:matches[0][0], l:matches[0][1] + 1, 0 ])
+                    break
+                elseif len(l:matches) == 0
+                    break
+                endif
+
+                for l:_match in l:matches
+                    let l:_match_str = l:visible_lines[l:_match[0]][l:_match[1]:l:_match[2]]
+                    echo l:_match_str
+                endfor
+                echo "===================================================================================================="
+            endwhile
             " if len(l:matches) > 0
                 " echom len(l:matches)
                 " let l:user_char = nr2char(getchar())
