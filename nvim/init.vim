@@ -14,6 +14,8 @@
 
     """ ---- Plugins start here ----
 
+        " colorscheme
+        " Plugin 'flrnd/candid.vim'
 
     """ ---- Plugins end here ----
 
@@ -83,26 +85,9 @@
 
     colorscheme default
 
-    " "Credit joshdick
-    " "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
-    " "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
-    " "(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
-    " if (empty($TMUX))
-      " if (has("nvim"))
-      " "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-      " let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-      " endif
-      " "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-      " "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-      " " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-      " if (has("termguicolors"))
-        " set termguicolors
-      " endif
-    " endif
-
-
-    " set background=dark " for the dark version
-    " set background=light " for the light version
+    " set termguicolors
+    " set background=dark 
+    " colorscheme candid
 
 
 """ ---- Bindings ----
@@ -137,6 +122,8 @@
     nnoremap K 4k
     vnoremap J 4j
     vnoremap K 4k
+
+    nnoremap <silent> s :call <SID>Jumper()<cr>
 
     """ --- Cscope Configuration ---
 
@@ -198,7 +185,6 @@
         " -- Surround Operator
 
             nnoremap <silent> cs :call <SID>ChangeSurroundOperator()<cr>
-
             nnoremap <silent> gs :<C-u>set operatorfunc=<SID>GoSurroundOperator<CR>g@
             vnoremap <silent> gs :<C-u>call <SID>GoSurroundOperator(visualmode())<CR>
 
@@ -647,9 +633,30 @@
                 endif
             endfunction
 
-    " --- Motion ---
-        
-        function! IsCandidate(matches, line_number, col_number)
+    " --- Jumper ---
+
+        function! s:HighlightMatches(matches, start_line)
+            " clear everything before highlight new.
+            highlight clear
+            call clearmatches()
+
+            highlight Jumper ctermfg=black ctermbg=green
+
+            for l:_match in a:matches
+                let l:line = a:start_line + l:_match[0]
+                let l:col_start = l:_match[1]
+                let l:col_end = l:_match[2] + 2
+
+                let l:pattern = "\\%".l:line."l\\%>".l:col_start."c\\%<".l:col_end."c"
+                " echo l:pattern
+                call matchadd('Jumper', l:pattern)
+            endfor
+
+            " make the highlights changes to take effect
+            redraw
+        endfunction
+
+        function! s:IsCandidate(matches, line_number, col_number)
             " if the first run always return true
             if a:matches[0][0] == -1
                 return a:col_number
@@ -663,7 +670,7 @@
             return -1
         endfunction
 
-        function! ExpandMatches(lines, matches)
+        function! s:ExpandMatches(lines, matches)
             let l:new_matches = []
             let l:duplicates = []
             for l:_match in a:matches
@@ -710,14 +717,14 @@
             return [l:new_matches, l:duplicates]
         endfunction
 
-        function! SearchLines(lines, char, prev_matches)
+        function! s:SearchLines(lines, char, prev_matches)
             let l:results = []
             let l:line_number = 0
 
             for l:_line in a:lines
                 let l:col_number = 0
                 for l:_char in split(_line, '\zs')
-                    let l:start_col_of_candidate = IsCandidate(a:prev_matches, l:line_number, l:col_number)
+                    let l:start_col_of_candidate = <SID>IsCandidate(a:prev_matches, l:line_number, l:col_number)
                     if l:start_col_of_candidate != -1
                         if l:_char == a:char
                             " adding the location of the match
@@ -731,7 +738,7 @@
             return l:results
         endfunction
 
-        function! Motion()
+        function! s:Jumper()
             " line number, start column number, end column number
             let l:matches = [[-1,-1,-1]]
 
@@ -744,16 +751,20 @@
 
             while 1
                 let l:user_char_number = getchar()
-                " if user escapes
+                " if user press escapes
                 if l:user_char_number == 27
+                    if len(l:duplicates) == 0
+                        break
+                    endif
                     call setpos('.', [0, l:start_line + l:duplicates[0][0], l:duplicates[1][1], 0 ])
                     break
                 endif
+
                 let l:user_char = nr2char(l:user_char_number)
 
-                let l:matches = SearchLines(l:visible_lines, l:user_char, l:matches)
+                let l:matches = <SID>SearchLines(l:visible_lines, l:user_char, l:matches)
 
-                let l:expand_result = ExpandMatches(l:visible_lines, l:matches)
+                let l:expand_result = <SID>ExpandMatches(l:visible_lines, l:matches)
 
                 let l:matches = l:expand_result[0]
                 let l:duplicates = l:expand_result[1]
@@ -764,22 +775,16 @@
                     call setpos('.', [0, l:start_line + l:matches[0][0], l:matches[0][1] + 1, 0 ])
                     break
                 elseif len(l:matches) == 0
+                    echo "Not Found!"
                     break
                 endif
 
-                for l:_match in l:matches
-                    let l:_match_str = l:visible_lines[l:_match[0]][l:_match[1]:l:_match[2]]
-                    echo l:_match_str
-                endfor
-                echo "===================================================================================================="
+                call <SID>HighlightMatches(l:matches, l:start_line)
             endwhile
-            " if len(l:matches) > 0
-                " echom len(l:matches)
-                " let l:user_char = nr2char(getchar())
-                " let l:matches = SearchLines(l:visible_lines, l:user_char, l:matches)
-                " echom len(l:matches)
-            " endif
 
+            " clearing the highlight we made.
+            highlight clear
+            call clearmatches()
         endfunction
     
     " --- Operators ---
