@@ -640,16 +640,20 @@
             highlight clear
             call clearmatches()
 
-            highlight Jumper ctermfg=black ctermbg=green
+            highlight Jumper_1 ctermfg=black ctermbg=green
+            highlight Jumper_2 ctermfg=black ctermbg=blue
 
             for l:_match in a:matches
                 let l:line = a:start_line + l:_match[0]
                 let l:col_start = l:_match[1]
-                let l:col_end = l:_match[2] + 2
+                let l:col_end = l:_match[2] + 1
 
                 let l:pattern = "\\%".l:line."l\\%>".l:col_start."c\\%<".l:col_end."c"
                 " echo l:pattern
-                call matchadd('Jumper', l:pattern)
+                call matchadd('Jumper_1', l:pattern)
+
+                let l:pattern = "\\%".l:line."l\\%".l:col_end."c"
+                call matchadd('Jumper_2', l:pattern)
             endfor
 
             " make the highlights changes to take effect
