@@ -52,19 +52,10 @@
             set cscopequickfix=s-,c-,d-,i-,t-,e-
         endif
 
-        cnoreabbrev csa cs add
-        cnoreabbrev csf cs find
-        cnoreabbrev csk cs kill
-        cnoreabbrev csr cs reset
-        cnoreabbrev css cs show
-        cnoreabbrev csh cs help
-        
         "add any database in current dir
         if filereadable("cscope.out")
             cs add cscope.out
         endif
-
-        command! -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
     endif
 
     " cursor visualization.
@@ -122,9 +113,6 @@
     vnoremap J 4j
     vnoremap K 4k
 
-    " change s to the jumper plugin
-    nnoremap <silent> s :call <SID>Jumper()<cr>
-
     """ --- Cscope Configuration ---
 
         nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
@@ -167,6 +155,10 @@
 
         " -- Toggle commands --
 
+        " -- Find commands --
+
+            nnoremap <leader>f :call <SID>Jumper()<CR>
+
         " -- Search commands --
            
             " [Search File] 
@@ -174,11 +166,6 @@
 
             " [Search Content in files] 
             nnoremap <leader>sc :call <SID>RipGrepLaunch()<CR>
-
-        " -- Buffer commands --
-            
-            " [Buffer Before] Change to previous buffer
-            nnoremap <leader>bb :bp<CR>
 
     """ --- Custom Operators Bindings ---
         
@@ -649,7 +636,7 @@
                 let l:col_end = l:_match[2] + 1
 
                 let l:pattern = "\\%".l:line."l\\%>".l:col_start."c\\%<".l:col_end."c"
-                " echo l:pattern
+
                 call matchadd('Jumper_1', l:pattern, 1)
 
                 let l:pattern = "\\%".l:line."l\\%".l:col_end."c"
@@ -683,7 +670,6 @@
                 let l:longest_match = 0
                 let l:multiple_matches = 0
                 for l:__match in a:matches
-
                     " ignore if the same match
                     if l:__match[0] == l:_match[0] && l:__match[1] == l:_match[1] && l:__match[2] == l:__match[2]
                         continue
@@ -711,17 +697,53 @@
                     endif
                 endfor
 
-                " adding the new expanded match
-                call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
+                    let l:found = 0
+                    " add to matches if the first one
+                    for l:dup in l:duplicates
+                        if l:dup[0] == l:_match[0] && l:dup[1] == l:_match[1]
+                            let l:found = 1
+                            break
+                        endif
+                    endfor 
 
-                " if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
-                    " call add(l:duplicates, [l:_match[0], l:_match[1]])
-                " else
-                    " " adding the new expanded match
-                    " call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
-                " endif
+                    if l:found == 0
+                        call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                    endif
+
+                    call add(l:duplicates, [l:_match[0], l:_match[1]])
+                else
+                    " adding the new expanded match
+                    call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                endif
             endfor
             return [l:new_matches, l:duplicates]
+        endfunction
+
+        function! s:AllMatchesTheSame(lines, matches)
+            " getting the first match to compare
+            let l:memory = a:lines[a:matches[0][0]][a:matches[0][1]:a:matches[0][2]]
+
+            for l:_match in a:matches
+                let l:_match_str = a:lines[l:_match[0]][l:_match[1]:l:_match[2]]
+                if l:memory != l:_match_str
+                    return 0
+                endif
+            endfor
+            return 1
+        endfunction
+
+        function! s:GetEndOfLineMatches(lines, prev_matches)
+            let l:results = []
+
+            for l:_match in a:prev_matches
+                " the match is pointing to the end of the line
+                if len(a:lines[l:_match[0]]) == l:_match[2]
+                    call add(l:results, l:_match)
+                endif
+            endfor
+
+            return l:results
         endfunction
 
         function! s:SearchLines(lines, char, prev_matches)
@@ -758,31 +780,36 @@
 
             while 1
                 let l:user_char_number = getchar()
-                " if user press escapes
+                " if user press ESC
                 if l:user_char_number == 27
                     if len(l:duplicates) == 0
                         break
                     endif
-                    call setpos('.', [0, l:start_line + l:duplicates[0][0], l:duplicates[0][1], 0 ])
+                    call setpos('.', [0, l:start_line + l:duplicates[0][0], l:duplicates[0][1], 0])
                     break
+                " if user press ENTER
+                elseif l:user_char_number == 13
+                    let l:matches = <SID>GetEndOfLineMatches(l:visible_lines, l:matches)
+                " if user press valid character
+                else
+                    let l:user_char = nr2char(l:user_char_number)
+                    let l:matches = <SID>SearchLines(l:visible_lines, l:user_char, l:matches)
                 endif
 
-                let l:user_char = nr2char(l:user_char_number)
-
-                let l:matches = <SID>SearchLines(l:visible_lines, l:user_char, l:matches)
-
                 let l:expand_result = <SID>ExpandMatches(l:visible_lines, l:matches)
-
                 let l:matches = l:expand_result[0]
                 let l:duplicates = l:expand_result[1]
 
                 " if found move cursor
                 if len(l:matches) == 1
-                    echo "Found!"
                     call setpos('.', [0, l:start_line + l:matches[0][0], l:matches[0][1] + 1, 0 ])
                     break
                 elseif len(l:matches) == 0
-                    echo "Not Found!"
+                    break
+                elseif <SID>AllMatchesTheSame(l:visible_lines, l:matches) == 1
+                    " TODO: add to search buffer for use in n and N.
+                    " for now move to the first match.
+                    call setpos('.', [0, l:start_line + l:matches[0][0], l:matches[0][1] + 1, 0 ])
                     break
                 endif
 
@@ -1415,4 +1442,3 @@
                 " Return the user's wrapscan settings.
                 let &wrapscan=l:saved_wrapscan
             endfunction
-
