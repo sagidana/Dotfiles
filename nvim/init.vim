@@ -37,6 +37,7 @@
     " set relativenumber          " setting relative numbers
     set foldmethod=indent       " setting folding to indentations
     set foldlevel=20            " unfold all folds by default
+    set foldignore=             " this is to ignore the # when folding!! so goood!!!
     set splitright              " split to the right.
     set splitbelow              " the default split direction will be at the bottom
     set mouse=a                 " enable mouse support (selection, resize).
