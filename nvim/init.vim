@@ -180,6 +180,11 @@
             nnoremap <silent> gc :<C-u>set operatorfunc=<SID>CommentOperator<CR>g@
             vnoremap <silent> gc :<C-u>call <SID>CommentOperator(visualmode())<CR>
         
+        " -- Printer Operator
+
+            nnoremap <silent> <leader>p :<C-u>set operatorfunc=<SID>PrinterOperator<CR>g@
+            vnoremap <silent> <leader>p :<C-u>call <SID>PrinterOperator(visualmode())<CR>
+
     """ --- Custom Text Objects Bindings ---
 
         " -- Indent Text Object
@@ -956,8 +961,8 @@
         " -- Comment Operator Implementation
 
             function! s:GetCommentSyntaxCommentOperator()
-                " default will be //
-                let l:comment_syntax = "//"
+                " default will be #
+                let l:comment_syntax = "#"
                 
                 if &filetype ==# 'python'
                     let l:comment_syntax = "#"
@@ -1130,6 +1135,96 @@
                 " " " Support count but not <SID>
                 " " nnoremap <expr> gc <SID>SetCommentOperator()
                 " " vnoremap <expr> <silent> gc <SID>SetCommentOperator()
+
+        " -- Printer Operator Implementation
+
+            function! s:GetPrintSyntaxPrinterOperator()
+                let l:print_syntax_start = ""
+                let l:print_syntax_end = ""
+                
+                if &filetype ==# 'python'
+                    let l:print_syntax_start = "print('{}'.format("
+                    let l:print_syntax_end = "))"
+                    let l:end_cursor_postion = 8
+                elseif &filetype ==# 'c'
+                    let l:print_syntax_start = "printf(\"\", "
+                    let l:print_syntax_end = ");"
+                    let l:end_cursor_postion = 9
+                elseif &filetype ==# 'vim'
+                    let l:print_syntax_start = "echomsg "
+                    let l:print_syntax_end = ""
+                    let l:end_cursor_postion = 8
+                endif
+
+                return [l:print_syntax_start, l:print_syntax_end, l:end_cursor_postion]
+            endfunction
+
+            function! s:MainPrinterOperator(start_range, end_range)
+                if line(a:start_range) != line(a:end_range)
+                    return
+                endif
+
+                let l:to_print = getline(line(a:start_range))
+                let l:to_print = l:to_print[col(a:start_range) - 1:col(a:end_range) - 1]
+
+                echomsg l:to_print
+
+                let l:print_syntax_start = <SID>GetPrintSyntaxPrinterOperator()[0]
+                let l:print_syntax_end = <SID>GetPrintSyntaxPrinterOperator()[1]
+                let l:end_cursor_position = <SID>GetPrintSyntaxPrinterOperator()[2]
+
+                let l:line_to_append = l:print_syntax_start.l:to_print.l:print_syntax_end
+
+                " getting the current indentation level
+                let l:indent_level = indent(line("."))
+                
+                " adding spaces to match indentation.
+                while l:indent_level > 0
+                    let l:line_to_append = ' '.l:line_to_append
+                    let l:indent_level -= 1
+                endwhile
+
+                " this append the line below the cursor
+                call append(line('.'), [l:line_to_append])
+
+                " move the string location
+                call setpos('.', [0, line('.') + 1, l:end_cursor_position + indent(line('.')), 0])
+            endfunction
+
+            function! s:PrinterOperator(type)
+                " Save unnamed register's content
+                let l:saved_unnamed_register = @@
+
+                if a:type ==# 'v'
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainPrinterOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'V'
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainPrinterOperator(l:start_range, l:end_range)
+                elseif a:type ==# "\<c-v>"                          " Visuall Block mode
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainPrinterOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'line'
+                    let l:start_range = "'["
+                    let l:end_range = "']"
+
+                    call <SID>MainPrinterOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'char'
+                    let l:start_range = "'["
+                    let l:end_range = "']"
+
+                    call <SID>MainPrinterOperator(l:start_range, l:end_range)
+                endif
+
+                " Restore unnamed register's content
+                let @@ = l:saved_unnamed_register 
+            endfunction
 
     " --- Text Objects ---
 
