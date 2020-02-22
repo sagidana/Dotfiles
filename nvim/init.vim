@@ -183,8 +183,8 @@
         
         " -- Printer Operator
 
-            nnoremap <silent> <leader>p :<C-u>set operatorfunc=<SID>PrinterOperator<CR>g@
-            vnoremap <silent> <leader>p :<C-u>call <SID>PrinterOperator(visualmode())<CR>
+            nnoremap <silent> gp :<C-u>set operatorfunc=<SID>PrinterOperator<CR>g@
+            vnoremap <silent> gp :<C-u>call <SID>PrinterOperator(visualmode())<CR>
 
     """ --- Custom Text Objects Bindings ---
 
