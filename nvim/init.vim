@@ -624,7 +624,16 @@
 
     " --- Jumper ---
 
-        function! s:HighlightMatches(matches, start_line)
+        function! s:GetLineByNumber(lines, line_number)
+            for l:line in a:lines
+                if l:line[0] == a:line_number
+                    return l:line
+                endif
+            endfor
+            return [-1]
+        endfunction
+        
+        function! s:HighlightMatches(matches)
             " clear everything before highlight new.
             highlight clear
             call clearmatches()
@@ -633,7 +642,7 @@
             highlight Jumper_2 ctermfg=black ctermbg=blue
 
             for l:_match in a:matches
-                let l:line = a:start_line + l:_match[0]
+                let l:line = l:_match[0]
                 let l:col_start = l:_match[1]
                 let l:col_end = l:_match[2] + 1
 
@@ -667,7 +676,7 @@
             let l:new_matches = []
             let l:duplicates = []
             for l:_match in a:matches
-                let l:_match_str = a:lines[l:_match[0]][l:_match[1]:]
+                let l:_match_str = <SID>GetLineByNumber(a:lines, l:_match[0])[1][l:_match[1]:]
 
                 let l:longest_match = 0
                 let l:multiple_matches = 0
@@ -677,39 +686,38 @@
                         continue
                     endif
 
-                    let l:__match_str = a:lines[l:__match[0]][l:__match[1]:]
+                    let l:__match_str = <SID>GetLineByNumber(a:lines, l:__match[0])[1][l:__match[1]:]
 
                     let l:current_match_len = 0
 
                     let l:loop_len = len(l:_match_str)
-                    let l:loop_index = 0
-                    while l:loop_index < l:loop_len
-                        if l:_match_str[l:loop_index] != l:__match_str[l:loop_index]
+                    while l:current_match_len < l:loop_len
+                        if l:_match_str[l:current_match_len] != l:__match_str[l:current_match_len]
                             break
                         endif
                         let l:current_match_len += 1
-                        let l:loop_index += 1
                     endwhile
 
                     if l:current_match_len > l:longest_match
                         let l:longest_match = l:current_match_len
                         let l:multiple_matches = 0
-                    elseif l:current_match_len == l:longest_match && l:__match_str[l:loop_index] == l:_match_str[l:loop_index]
+                    elseif l:current_match_len == l:longest_match && l:__match_str[l:current_match_len] == l:_match_str[l:current_match_len]
                         let l:multiple_matches = 1
                     endif
                 endfor
 
                 if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
-                    let l:found = 0
+                    let l:found_in_duplicates = 0
                     " add to matches if the first one
                     for l:dup in l:duplicates
                         if l:dup[0] == l:_match[0] && l:dup[1] == l:_match[1]
-                            let l:found = 1
+                            let l:found_in_duplicates = 1
                             break
                         endif
                     endfor 
 
-                    if l:found == 0
+                    " add only the first to the matches.
+                    if l:found_in_duplicates == 0
                         call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
                     endif
 
@@ -724,10 +732,15 @@
 
         function! s:AllMatchesTheSame(lines, matches)
             " getting the first match to compare
-            let l:memory = a:lines[a:matches[0][0]][a:matches[0][1]:a:matches[0][2]]
+            let l:line = <SID>GetLineByNumber(a:lines, a:matches[0][0])
+            let l:memory = l:line[1][a:matches[0][1]:a:matches[0][2]]
 
             for l:_match in a:matches
-                let l:_match_str = a:lines[l:_match[0]][l:_match[1]:l:_match[2]]
+                let l:curr_line = <SID>GetLineByNumber(a:lines, l:_match[0])
+                if l:curr_line[0] == -1
+                    continue
+                endif
+                let l:_match_str = l:curr_line[1][l:_match[1]:l:_match[2]]
                 if l:memory != l:_match_str
                     return 0
                 endif
@@ -739,8 +752,10 @@
             let l:results = []
 
             for l:_match in a:prev_matches
+                let l:line = <SID>GetLineByNumber(a:lines, l:_match[0])
+
                 " the match is pointing to the end of the line
-                if len(a:lines[l:_match[0]]) == l:_match[2]
+                if len(l:line[1]) == l:_match[2]
                     call add(l:results, l:_match)
                 endif
             endfor
@@ -750,23 +765,37 @@
 
         function! s:SearchLines(lines, char, prev_matches)
             let l:results = []
-            let l:line_number = 0
 
             for l:_line in a:lines
                 let l:col_number = 0
-                for l:_char in split(_line, '\zs')
-                    let l:start_col_of_candidate = <SID>IsCandidate(a:prev_matches, l:line_number, l:col_number)
+                for l:_char in split(l:_line[1], '\zs')
+                    let l:start_col_of_candidate = <SID>IsCandidate(a:prev_matches, l:_line[0], l:col_number)
                     if l:start_col_of_candidate != -1
                         if l:_char == a:char
                             " adding the location of the match
-                            call add(l:results, [l:line_number, l:start_col_of_candidate, l:col_number])
+                            call add(l:results, [l:_line[0], l:start_col_of_candidate, l:col_number])
                         endif
                     endif
                     let l:col_number += 1
                 endfor
-                let l:line_number += 1
             endfor
             return l:results
+        endfunction
+
+        function! s:GetVisibleLines(start_line, end_line)
+            let l:visible_lines = []
+            let l:current_line = a:start_line
+            while l:current_line != a:end_line
+                " if the line is folded, continue.
+                if foldclosed(l:current_line) != -1
+                    let l:current_line += 1
+                    continue
+                endif 
+
+                call add(l:visible_lines, [l:current_line, getline(l:current_line)])
+                let l:current_line += 1
+            endwhile
+            return l:visible_lines
         endfunction
 
         function! s:Jumper()
@@ -777,8 +806,7 @@
             let l:end_line = line('w$')
 
             let l:duplicates = [[line('.') - l:start_line, col('.')]]
-
-            let l:visible_lines = nvim_buf_get_lines(0, l:start_line - 1, l:end_line, 0)
+            let l:visible_lines = <SID>GetVisibleLines(l:start_line, l:end_line)
 
             while 1
                 let l:user_char_number = getchar()
@@ -787,7 +815,7 @@
                     if len(l:duplicates) == 0
                         break
                     endif
-                    call setpos('.', [0, l:start_line + l:duplicates[0][0], l:duplicates[0][1], 0])
+                    call setpos('.', [0, l:duplicates[0][0], l:duplicates[0][1], 0])
                     break
                 " if user press ENTER
                 elseif l:user_char_number == 13
@@ -798,24 +826,26 @@
                     let l:matches = <SID>SearchLines(l:visible_lines, l:user_char, l:matches)
                 endif
 
+                " this will expand the matches until the next uniqe way to
+                " identify itself.
                 let l:expand_result = <SID>ExpandMatches(l:visible_lines, l:matches)
                 let l:matches = l:expand_result[0]
                 let l:duplicates = l:expand_result[1]
 
                 " if found move cursor
                 if len(l:matches) == 1
-                    call setpos('.', [0, l:start_line + l:matches[0][0], l:matches[0][1] + 1, 0 ])
+                    call setpos('.', [0, l:matches[0][0], l:matches[0][1] + 1, 0 ])
                     break
                 elseif len(l:matches) == 0
                     break
                 elseif <SID>AllMatchesTheSame(l:visible_lines, l:matches) == 1
                     " TODO: add to search buffer for use in n and N.
                     " for now move to the first match.
-                    call setpos('.', [0, l:start_line + l:matches[0][0], l:matches[0][1] + 1, 0 ])
+                    call setpos('.', [0, l:matches[0][0], l:matches[0][1] + 1, 0 ])
                     break
                 endif
 
-                call <SID>HighlightMatches(l:matches, l:start_line)
+                call <SID>HighlightMatches(l:matches)
             endwhile
 
             " clearing the highlight we made.
