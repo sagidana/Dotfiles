@@ -701,31 +701,42 @@
                     if l:current_match_len > l:longest_match
                         let l:longest_match = l:current_match_len
                         let l:multiple_matches = 0
+                    "TODO why the other way around?
+                    " elseif l:current_match_len == l:longest_match 
                     elseif l:current_match_len == l:longest_match && l:__match_str[l:current_match_len] == l:_match_str[l:current_match_len]
                         let l:multiple_matches = 1
                     endif
                 endfor
 
-                if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
-                    let l:found_in_duplicates = 0
-                    " add to matches if the first one
-                    for l:dup in l:duplicates
-                        if l:dup[0] == l:_match[0] && l:dup[1] == l:_match[1]
-                            let l:found_in_duplicates = 1
-                            break
-                        endif
-                    endfor 
+                " adding the new expanded match
+                call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
 
-                    " add only the first to the matches.
-                    if l:found_in_duplicates == 0
-                        call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
-                    endif
-
-                    call add(l:duplicates, [l:_match[0], l:_match[1]])
-                else
-                    " adding the new expanded match
-                    call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                " if there are multiple matches add it to the duplicates so we
+                " can uniquely identify them later.
+                if l:multiple_matches == 1
+                    call add(l:duplicates, [l:_match[0], l:_match[1], l:_match[2]])
                 endif
+
+                " if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
+                    " let l:found_in_duplicates = 0
+                    " " add to matches if the first one
+                    " for l:dup in l:duplicates
+                        " if l:dup[0] == l:_match[0] && l:dup[1] == l:_match[1]
+                            " let l:found_in_duplicates = 1
+                            " break
+                        " endif
+                    " endfor 
+
+                    " " add only the first to the matches.
+                    " if l:found_in_duplicates == 0
+                        " call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                    " endif
+
+                    " call add(l:duplicates, [l:_match[0], l:_match[1]])
+                " else
+                    " adding the new expanded match
+                    " call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                " endif
             endfor
             return [l:new_matches, l:duplicates]
         endfunction
@@ -798,6 +809,44 @@
             return l:visible_lines
         endfunction
 
+        function! s:UniquelifyDuplicates(lines, matches, duplicates)
+            let l:new_matches = []
+
+            for l:_match in a:matches
+                let l:match_as_string = <SID>GetLineByNumber(a:lines, l:_match[0])[1][l:_match[1]:l:_match[2]]
+
+                let l:current_duplicates = []
+                for l:_dup in a:duplicates
+                    let l:dup_as_string = <SID>GetLineByNumber(a:lines, l:_dup[0])[1][l:_dup[1]:l:_dup[2]]
+
+                    if l:dup_as_string == l:match_as_string
+                        call add(l:current_duplicates, l:_dup)
+                    endif
+                endfor
+
+                " ignore non duplicates
+                if len(l:current_duplicates) == 0
+                    call add(l:new_matches, l:_match)
+                    continue
+                endif
+
+                " insert duplicates in unique way by chnaging its length
+                " all duplicates are the same, take the first one.
+                let l:new_length = 0
+                for l:_dup in l:current_duplicates
+                    call add(l:new_matches, [l:_dup[0], l:_dup[1], l:_dup[1] + l:new_length])
+
+                    " make sure we do not go beyond boundries
+                    let l:line = <SID>GetLineByNumber(a:lines, l:_dup[0])[1]
+                    echomsg l:line[l:_dup[1]:l:_dup[2]]
+                    if l:_dup[1] + l:new_length < len(l:line)
+                        let l:new_length += 1
+                    endif
+                endfor
+            endfor
+            return l:new_matches
+        endfunction
+
         function! s:Jumper()
             " line number, start column number, end column number
             let l:matches = [[-1,-1,-1]]
@@ -831,6 +880,9 @@
                 let l:expand_result = <SID>ExpandMatches(l:visible_lines, l:matches)
                 let l:matches = l:expand_result[0]
                 let l:duplicates = l:expand_result[1]
+
+                " this will make the duplicates distinguisables
+                let l:matches = <SID>UniquelifyDuplicates(l:visible_lines, l:matches, l:duplicates)
 
                 " if found move cursor
                 if len(l:matches) == 1
