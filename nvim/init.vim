@@ -1052,6 +1052,8 @@
                     let l:comment_syntax = "#"
                 elseif &filetype ==# 'c'
                     let l:comment_syntax = "//"
+                elseif &filetype ==# 'cpp'
+                    let l:comment_syntax = "//"
                 endif
 
                 return l:comment_syntax
