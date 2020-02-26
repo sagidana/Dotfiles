@@ -23,7 +23,7 @@
 
 """ ---- General configuration ---- 
 
-    set nocompatible               " Disable compatibility to old-time vi
+    set nocompatible            " Disable compatibility to old-time vi
     set showmatch               " Show matching brackets.
     set hlsearch                " highlight search results
     set incsearch               " highlight saerch results while searching.
@@ -698,11 +698,14 @@
                         let l:current_match_len += 1
                     endwhile
 
-                    if l:current_match_len > l:longest_match
+                    " check if we got to the end of the line.
+                    " if we did we have duplicates
+                    if l:current_match_len == len(l:_match_str)
+                        let l:multiple_matches = 1
+                        let l:longest_match = l:current_match_len
+                    elseif l:current_match_len > l:longest_match
                         let l:longest_match = l:current_match_len
                         let l:multiple_matches = 0
-                    "TODO why the other way around?
-                    " elseif l:current_match_len == l:longest_match 
                     elseif l:current_match_len == l:longest_match && l:__match_str[l:current_match_len] == l:_match_str[l:current_match_len]
                         let l:multiple_matches = 1
                     endif
@@ -714,7 +717,7 @@
                 " if there are multiple matches add it to the duplicates so we
                 " can uniquely identify them later.
                 if l:multiple_matches == 1
-                    call add(l:duplicates, [l:_match[0], l:_match[1], l:_match[2]])
+                    call add(l:duplicates, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
                 endif
 
                 " if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
@@ -838,7 +841,6 @@
 
                     " make sure we do not go beyond boundries
                     let l:line = <SID>GetLineByNumber(a:lines, l:_dup[0])[1]
-                    echomsg l:line[l:_dup[1]:l:_dup[2]]
                     if l:_dup[1] + l:new_length < len(l:line)
                         let l:new_length += 1
                     endif
@@ -889,11 +891,6 @@
                     call setpos('.', [0, l:matches[0][0], l:matches[0][1] + 1, 0 ])
                     break
                 elseif len(l:matches) == 0
-                    break
-                elseif <SID>AllMatchesTheSame(l:visible_lines, l:matches) == 1
-                    " TODO: add to search buffer for use in n and N.
-                    " for now move to the first match.
-                    call setpos('.', [0, l:matches[0][0], l:matches[0][1] + 1, 0 ])
                     break
                 endif
 
