@@ -76,11 +76,6 @@
 
     colorscheme default
 
-    " set termguicolors
-    " set background=dark 
-    " colorscheme candid
-
-
 """ ---- Bindings ----
 
     " Disable search highlights until next search at <esc> press.
@@ -97,6 +92,10 @@
     nnoremap <C-Down> :resize -6<CR>
     nnoremap <C-Right> :vertical resize +6<CR>
     nnoremap <C-Left> :vertical resize -6<CR>
+
+    " Change indentation and keep visualized!
+    vnoremap > >gv
+    vnoremap < <gv
 
     " Navigation
     nnoremap <C-j> <C-w><C-j>
@@ -742,6 +741,8 @@
                     let l:comment_syntax = "//"
                 elseif &filetype ==# 'cpp'
                     let l:comment_syntax = "//"
+                elseif &filetype ==# 'rust'
+                    let l:comment_syntax = "//"
                 endif
 
                 return l:comment_syntax
@@ -995,6 +996,19 @@
                 " Restore unnamed register's content
                 let @@ = l:saved_unnamed_register 
             endfunction
+
+    " --- Language Server Protocol ---
+
+    function! LSPStartClient()
+        " lua << EOF
+            " config = {
+                " cmd = {"pyls"};
+                " filetypes = {"python"};
+                " root_dir = "/s/All-In-One";
+            " }
+            " vim.lsp.start_client(config)
+        " EOF
+    endfunction
 
     " --- Text Objects ---
 
