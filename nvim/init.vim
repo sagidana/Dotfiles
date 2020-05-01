@@ -1,24 +1,11 @@
-""" ---- Vundle configuration ----  
+""" ---- Plug configuration ----  
 
-    filetyp off
-    if has("win32")
-        set rtp+=$HOME/AppData/Local/nvim/bundle/Vundle.vim
-        call vundle#begin('$HOME/AppData/Local/nvim/bundle')
-    else
-        set rtp+=~/.config/nvim/bundle/Vundle.vim
-        call vundle#begin('~/.config/nvim/bundle')
-    endif
+    " - For Neovim: stdpath('data') . '/plugged'
+    call plug#begin(stdpath('data') . '/plugged')
 
-    " let Vundle manage Vundle, required
-    Plugin 'VundleVim/Vundle.vim'
+        " Plug 'neovim/nvim-lsp'
 
-    """ ---- Plugins start here ----
-
-
-    """ ---- Plugins end here ----
-
-    " All of your Plugins must be added before the following line
-    call vundle#end()
+    call plug#end()
 
 
 """ ---- General configuration ---- 
@@ -43,6 +30,10 @@
     set mouse=a                 " enable mouse support (selection, resize).
     set tags=tags               " enable ctags
     set clipboard+=unnamedplus
+
+    " show whitespace characters
+    set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
+    " set list
 
     if has('cscope')
         set cscopetag 
@@ -71,10 +62,40 @@
     " allows auto-indenting depending on file type
     filetype plugin indent on  
 
+""" ---- Hex editing ----
+" If one has a particular extension that one uses for binary files (such as exe,
+" bin, etc), you may find it helpful to automate the process with the following
+" bit of autocmds for your <.vimrc>.  Change that "*.bin" to whatever
+" comma-separated list of extension(s) you find yourself wanting to edit:
+
+" vim -b : edit binary using xxd-format!
+augroup Binary
+  au!
+  au BufReadPre  *.bin let &bin=1
+  au BufReadPost *.bin if &bin | %!xxd
+  au BufReadPost *.bin set ft=xxd | endif
+  au BufWritePre *.bin if &bin | %!xxd -r
+  au BufWritePre *.bin endif
+  au BufWritePost *.bin if &bin | %!xxd
+  au BufWritePost *.bin set nomod | endif
+augroup END
+
+""" ---- Language Server Protocol configuration ----
+
+    " " Enable python languge server
+    " lua require'nvim_lsp'.pyls.setup{}
+
+    " " Enable vimscript languge server
+    " lua require'nvim_lsp'.vimls.setup{}
+
+    " " Enable c language server
+    " lua require'nvim_lsp'.clangd.setup{}
+
 
 """ ---- Colorscheme! ----
 
     colorscheme default
+
 
 """ ---- Bindings ----
 
@@ -113,7 +134,18 @@
     vnoremap J 4j
     vnoremap K 4k
 
-    """ --- Cscope Configuration ---
+    """ --- Language Server Bindings ---
+
+        " nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+        " nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+        " nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+        " nnoremap <silent> gD    <cmd>lua vim.lsp.buf.type_definition()<CR>
+
+        " nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
+        " nnoremap <silent> gh    <cmd>lua vim.lsp.buf.hover()<CR>
+        " nnoremap <silent> gx    <cmd>lua vim.lsp.buf.references()<CR>
+
+    """ --- Cscope Bindings ---
 
         nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
         nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
@@ -138,6 +170,10 @@
             " [Open Config] Opening the init.vim
             nnoremap <leader>oc :vsplit $MYVIMRC<CR>
             
+        " -- Blame commands --
+
+            vnoremap <leader>b :call <SID>BlameLaunch()<CR>
+
         " -- Folding commands --
         
             nnoremap <leader>zz :set foldmethod=manual<CR>
@@ -206,6 +242,7 @@
         
             let g:terminal_buf_id = -1
             let g:terminal_ignore_exit_code = 0
+            let g:terminal_dont_close = 0
             let g:terminal_content = []
             let g:terminal_on_exit_execute_code = "silent! normal! ".":echo 'nothing to do!'"."\r"
 
@@ -213,7 +250,9 @@
                 let g:terminal_content = nvim_buf_get_lines(g:terminal_id, 0, -1, 0)
                 
                 " close the terminal buffer after exit.
-                close
+                if g:terminal_dont_close == 0
+                    close
+                endif
 
                 if g:terminal_ignore_exit_code == 0
                     if a:code == 0
@@ -225,7 +264,7 @@
                 endif
             endfunction
 
-            function! TerminalLaunch(cmd, on_exit_code, launch_type, ignore_exit_code)
+            function! TerminalLaunch(cmd, on_exit_code, launch_type, ignore_exit_code, dont_close)
                 " spliting the window for the terminal
                 if a:launch_type == 0
                     split
@@ -241,13 +280,14 @@
                 " for the close operation
                 let g:terminal_id = bufnr("%")
                 let g:terminal_ignore_exit_code = a:ignore_exit_code
+                let g:terminal_dont_close = a:dont_close
 
                 if len(a:on_exit_code) > 0
                     " setting the code to be run once the terminal exits.
                     let g:terminal_on_exit_execute_code = a:on_exit_code
                 endif
 
-                " launching the terminal witht he command
+                " launching the terminal with the command
                 call termopen(a:cmd, {'on_exit': "TerminalOnExit"})
 
                 " entering insert mode after the terminal is launched.
@@ -261,7 +301,7 @@
             endfunction
 
             function! s:FZFLaunch()
-                call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r", 0, 0)
+                call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r", 0, 0, 0)
             endfunction
 
         " --- Rig Grep ---
@@ -305,8 +345,30 @@
                 call inputrestore()
 
                 if len(l:to_search) > 0
-                    call TerminalLaunch("rg --vimgrep ".l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1)
+                    call TerminalLaunch("rg --vimgrep ".l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1, 0)
                 endif
+            endfunction
+
+        " --- Blame ---
+
+            function! s:BlameLaunch()
+                let l:linux_git_repo = "/home/s/github/linux"
+
+                " getting the currently selected lines
+                let l:line_start = line("'<")
+                let l:line_stop = line("'>")
+
+                " giving me the current file
+                let l:file_path = expand("%")
+
+                " the git blame command to execute
+                let l:git_command = "git log -L".l:line_start.",".l:line_stop.":".l:file_path 
+
+                " this command let me run any command from the linux git repo
+                " directory.
+                let l:complete_command= "pushd ".l:linux_git_repo." && ".l:git_command." && popd"
+                
+                call TerminalLaunch(l:complete_command, "", 2, 1, 1)
             endfunction
 
     " --- Jumper ---
@@ -998,6 +1060,7 @@
             endfunction
 
     " --- Language Server Protocol ---
+    " TODO: neovim is not there yet...
 
     function! LSPStartClient()
         " lua << EOF
