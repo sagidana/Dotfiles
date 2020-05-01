@@ -21,7 +21,6 @@
     set shiftwidth=4            " width for autoindents
     set autoindent              " indent a new line the same amount as the line just typed
     set number                  " add line numbers
-    " set relativenumber          " setting relative numbers
     set foldmethod=indent       " setting folding to indentations
     set foldlevel=20            " unfold all folds by default
     set foldignore=             " this is to ignore the # when folding!! so goood!!!
@@ -31,9 +30,18 @@
     set tags=tags               " enable ctags
     set clipboard+=unnamedplus
 
+    " -- Status Line --
+    set statusline=
+    set statusline+=\ %M        " is the file has being modified?
+    set statusline+=\ %y        " the file type
+    set statusline+=\ %r        " is read-only?
+    set statusline+=\ %f        " relative file path
+    set statusline+=%=          " all settings after this are alligned right
+    set statusline+=\ %l:%c     " show line:column
+    set statusline+=\ [%p%%]    " the precentage we in the file
+
     " show whitespace characters
     set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
-    " set list
 
     if has('cscope')
         set cscopetag 
