@@ -1,11 +1,11 @@
 """ ---- Plug configuration ----  
 
-    " - For Neovim: stdpath('data') . '/plugged'
-    call plug#begin(stdpath('data') . '/plugged')
+    " " - For Neovim: stdpath('data') . '/plugged'
+    " call plug#begin(stdpath('data') . '/plugged')
 
-        " Plug 'neovim/nvim-lsp'
+        " " Plug 'neovim/nvim-lsp'
 
-    call plug#end()
+    " call plug#end()
 
 
 """ ---- General configuration ---- 
@@ -70,23 +70,26 @@
     " allows auto-indenting depending on file type
     filetype plugin indent on  
 
-""" ---- Hex editing ----
-" If one has a particular extension that one uses for binary files (such as exe,
-" bin, etc), you may find it helpful to automate the process with the following
-" bit of autocmds for your <.vimrc>.  Change that "*.bin" to whatever
-" comma-separated list of extension(s) you find yourself wanting to edit:
 
-" vim -b : edit binary using xxd-format!
-augroup Binary
-  au!
-  au BufReadPre  *.bin let &bin=1
-  au BufReadPost *.bin if &bin | %!xxd
-  au BufReadPost *.bin set ft=xxd | endif
-  au BufWritePre *.bin if &bin | %!xxd -r
-  au BufWritePre *.bin endif
-  au BufWritePost *.bin if &bin | %!xxd
-  au BufWritePost *.bin set nomod | endif
-augroup END
+""" ---- Hex editing ----
+
+    " If one has a particular extension that one uses for binary files (such as exe,
+    " bin, etc), you may find it helpful to automate the process with the following
+    " bit of autocmds for your <.vimrc>.  Change that "*.bin" to whatever
+    " comma-separated list of extension(s) you find yourself wanting to edit:
+
+    " vim -b : edit binary using xxd-format!
+    augroup Binary
+        au!
+        au BufReadPre  *.bin let &bin=1
+        au BufReadPost *.bin if &bin | %!xxd
+        au BufReadPost *.bin set ft=xxd | endif
+        au BufWritePre *.bin if &bin | %!xxd -r
+        au BufWritePre *.bin endif
+        au BufWritePost *.bin if &bin | %!xxd
+        au BufWritePost *.bin set nomod | endif
+    augroup END
+
 
 """ ---- Language Server Protocol configuration ----
 
@@ -102,6 +105,8 @@ augroup END
 
 """ ---- Colorscheme! ----
 
+    " somehow the only shceme that actualy worked for me in all
+    " use cases is the default one... WTF?
     colorscheme default
 
 
