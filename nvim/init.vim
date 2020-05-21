@@ -69,6 +69,10 @@
 
     " allows auto-indenting depending on file type
     filetype plugin indent on  
+    
+    " only for c use syntax fold method
+    autocmd FileType c setlocal foldmethod=syntax
+    autocmd FileType cpp setlocal foldmethod=syntax
 
 
 """ ---- Hex editing ----
