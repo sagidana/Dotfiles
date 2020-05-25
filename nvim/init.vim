@@ -135,6 +135,10 @@
     vnoremap > >gv
     vnoremap < <gv
 
+    " paste what yanked before. not delete or what not.
+    " *** only for visual mode! ***
+    vnoremap p "0p
+
     " Navigation
     nnoremap <C-j> <C-w><C-j>
     nnoremap <C-k> <C-w><C-k>
