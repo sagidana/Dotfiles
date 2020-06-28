@@ -21,6 +21,7 @@
     set shiftwidth=4            " width for autoindents
     set autoindent              " indent a new line the same amount as the line just typed
     set number                  " add line numbers
+    set relativenumber          " setting relative numbers
     set foldmethod=indent       " setting folding to indentations
     set foldlevel=20            " unfold all folds by default
     set foldignore=             " this is to ignore the # when folding!! so goood!!!
@@ -126,34 +127,18 @@
     nnoremap <M-o> <C-i>
 
     " Resizing
-    nnoremap <C-Up> :resize +6<CR>
-    nnoremap <C-Down> :resize -6<CR>
-    nnoremap <C-Right> :vertical resize +6<CR>
-    nnoremap <C-Left> :vertical resize -6<CR>
+    nnoremap <C-k> :resize +6<CR>
+    nnoremap <C-j> :resize -6<CR>
+    nnoremap <C-l> :vertical resize +6<CR>
+    nnoremap <C-h> :vertical resize -6<CR>
 
     " Change indentation and keep visualized!
     vnoremap > >gv
     vnoremap < <gv
-
-    " paste what yanked before. not delete or what not.
-    " *** only for visual mode! ***
+    
+    " paste only what yanked and not deleted before.
+    " *** in visual mode only ***
     vnoremap p "0p
-
-    " Navigation
-    nnoremap <C-j> <C-w><C-j>
-    nnoremap <C-k> <C-w><C-k>
-    nnoremap <C-l> <C-w><C-l>
-    nnoremap <C-h> <C-w><C-h>
-
-    nnoremap <M-j> <C-w>J
-    nnoremap <M-k> <C-w>K
-    nnoremap <M-l> <C-w>L
-    nnoremap <M-h> <C-w>H
-
-    nnoremap J 4j
-    nnoremap K 4k
-    vnoremap J 4j
-    vnoremap K 4k
 
     """ --- Language Server Bindings ---
 
@@ -373,7 +358,8 @@
         " --- Blame ---
 
             function! s:BlameLaunch()
-                let l:linux_git_repo = "/home/s/github/linux"
+                " let l:linux_git_repo = "/home/s/Github/linux"
+                let l:linux_git_repo = "."
 
                 " getting the currently selected lines
                 let l:line_start = line("'<")
@@ -1688,3 +1674,4 @@
 
                             " autocmd FileType c vnoremap <buffer> <silent> iM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 1)<cr>
                             " autocmd FileType c vnoremap <buffer> <silent> aM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 0)<cr>
+
