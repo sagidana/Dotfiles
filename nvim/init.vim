@@ -3,7 +3,7 @@
     " " - For Neovim: stdpath('data') . '/plugged'
     " call plug#begin(stdpath('data') . '/plugged')
 
-        " " Plug 'neovim/nvim-lsp'
+        " Plug 'neovim/nvim-lsp'
 
     " call plug#end()
 
@@ -41,8 +41,10 @@
     set statusline+=\ %l:%c     " show line:column
     set statusline+=\ [%p%%]    " the precentage we in the file
 
-    " show whitespace characters
-    set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
+    " whitespace characters
+    " do 'set list/nolist' to show/hide whitespace characters
+    " set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
+    " set listchars=eol:¬,tab:>·
 
     if has('cscope')
         set cscopetag 
@@ -113,6 +115,7 @@
     " somehow the only shceme that actualy worked for me in all
     " use cases is the default one... WTF?
     colorscheme default
+    " colorscheme monokai
 
 
 """ ---- Bindings ----
@@ -207,7 +210,8 @@
             nnoremap <leader>sf :call <SID>FZFLaunch()<CR>
 
             " [Search Content in files] 
-            nnoremap <leader>sc :call <SID>RipGrepLaunch()<CR>
+            nnoremap <leader>sc :call <SID>RipGrepLaunch(0)<CR>
+            vnoremap <leader>sc :call <SID>RipGrepLaunch(1)<CR>
 
     """ --- Custom Operators Bindings ---
         
@@ -345,10 +349,16 @@
                 endif
             endfunction
 
-            function! s:RipGrepLaunch()
-                call inputsave()
-                let l:to_search = input("rg --vimgrep ")
-                call inputrestore()
+            function! s:RipGrepLaunch(input_type)
+                if a:input_type == 1 " get input from visual selected
+                    " getting the current visually seleceted text 
+                    " (assume to be only one line)
+                    let l:to_search = "\"".getline("'<")[getpos("'<")[2]-1:getpos("'>")[2]-1]."\""
+                else
+                    call inputsave()
+                    let l:to_search = input("rg --vimgrep ")
+                    call inputrestore()
+                endif
 
                 if len(l:to_search) > 0
                     call TerminalLaunch("rg --vimgrep ".l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1, 0)
@@ -1066,19 +1076,20 @@
                 let @@ = l:saved_unnamed_register 
             endfunction
 
-    " --- Language Server Protocol ---
-    " TODO: neovim is not there yet...
+    " " --- Language Server Protocol ---
 
-    function! LSPStartClient()
-        " lua << EOF
-            " config = {
-                " cmd = {"pyls"};
-                " filetypes = {"python"};
-                " root_dir = "/s/All-In-One";
-            " }
-            " vim.lsp.start_client(config)
-        " EOF
-    endfunction
+        " " TODO: neovim is not there yet...
+
+        " function! LSPStartClient()
+            " " lua << EOF
+                " " config = {
+                    " " cmd = {"pyls"};
+                    " " filetypes = {"python"};
+                    " " root_dir = "/s/All-In-One";
+                " " }
+                " " vim.lsp.start_client(config)
+            " " EOF
+        " endfunction
 
     " --- Text Objects ---
 
@@ -1674,4 +1685,3 @@
 
                             " autocmd FileType c vnoremap <buffer> <silent> iM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 1)<cr>
                             " autocmd FileType c vnoremap <buffer> <silent> aM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 0)<cr>
-
