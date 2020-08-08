@@ -77,6 +77,9 @@
     autocmd FileType c setlocal foldmethod=syntax
     autocmd FileType cpp setlocal foldmethod=syntax
 
+    " highlight yanked text, lets see if I can start yanking without visual-mode...
+    au TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=200, on_visual=true}
+
 
 """ ---- Hex editing ----
 
@@ -142,6 +145,9 @@
     " paste only what yanked and not deleted before.
     " *** in visual mode only ***
     vnoremap p "0p
+
+    " Search for visually selected text
+    vnoremap / y/\V<C-R>=escape(@",'/\')<CR><CR>
 
     """ --- Language Server Bindings ---
 
