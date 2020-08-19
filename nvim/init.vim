@@ -117,8 +117,8 @@
 
     " somehow the only shceme that actualy worked for me in all
     " use cases is the default one... WTF?
-    colorscheme default
-    " colorscheme monokai
+    " colorscheme default
+    colorscheme monokai
 
 
 """ ---- Bindings ----
@@ -135,7 +135,8 @@
     " Resizing
     nnoremap <C-k> :resize +6<CR>
     nnoremap <C-j> :resize -6<CR>
-    nnoremap <C-l> :vertical resize +6<CR>
+    " change the mapping of the redraw
+    nnoremap <C-l> :vertical resize +6<CR> 
     nnoremap <C-h> :vertical resize -6<CR>
 
     " Change indentation and keep visualized!
@@ -185,6 +186,13 @@
             " [Open Config] Opening the init.vim
             nnoremap <leader>oc :vsplit $MYVIMRC<CR>
             
+        " -- Draw commands --
+
+            " use the default keymaps <C-L> to redraw the screen.
+            " for some reason there is a difference between :redraw! to the 
+            " default <C-L> behaviour.
+            nnoremap <leader>d <C-L>
+
         " -- Blame commands --
 
             vnoremap <leader>b :call <SID>BlameLaunch()<CR>
