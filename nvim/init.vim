@@ -1,11 +1,10 @@
 """ ---- Plug configuration ----  
 
-    " " - For Neovim: stdpath('data') . '/plugged'
-    " call plug#begin(stdpath('data') . '/plugged')
+    call plug#begin(stdpath('data') . '/plugged')
 
-        " Plug 'neovim/nvim-lsp'
+    " Plug 'neovim/nvim-lspconfig'
 
-    " call plug#end()
+    call plug#end()
 
 
 """ ---- General configuration ---- 
@@ -104,13 +103,16 @@
 """ ---- Language Server Protocol configuration ----
 
     " " Enable python languge server
+    " " lua require'nvim_lsp'.jedi_language_server.setup{}
     " lua require'nvim_lsp'.pyls.setup{}
+    " autocmd Filetype python setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
     " " Enable vimscript languge server
     " lua require'nvim_lsp'.vimls.setup{}
 
     " " Enable c language server
-    " lua require'nvim_lsp'.clangd.setup{}
+    " " lua require'nvim_lsp'.clangd.setup{}
+    " " lua require'nvim_lsp'.ccls.setup{}
 
 
 """ ---- Colorscheme! ----
@@ -132,13 +134,6 @@
     " Bind <C-i> to <M-o>
     nnoremap <M-o> <C-i>
 
-    " Resizing
-    nnoremap <C-k> :resize +6<CR>
-    nnoremap <C-j> :resize -6<CR>
-    " change the mapping of the redraw
-    nnoremap <C-l> :vertical resize +6<CR> 
-    nnoremap <C-h> :vertical resize -6<CR>
-
     " Change indentation and keep visualized!
     vnoremap > >gv
     vnoremap < <gv
@@ -151,11 +146,6 @@
     vnoremap / y/\V<C-R>=escape(@",'/\')<CR><CR>
 
     """ --- Language Server Bindings ---
-
-        " nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-        " nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-        " nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-        " nnoremap <silent> gD    <cmd>lua vim.lsp.buf.type_definition()<CR>
 
         " nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
         " nnoremap <silent> gh    <cmd>lua vim.lsp.buf.hover()<CR>
@@ -176,6 +166,11 @@
 
         let mapleader = "\<space>"  " set leader as space
 
+        " -- Update commands
+
+            " [Update Scope] Evaluating the vimrc
+            nnoremap <silent> <leader>us :call <SID>ScopeUpdate()<CR>
+            
         " -- Evlauate commands
 
             " [Evaluate Config] Evaluating the vimrc
@@ -186,13 +181,6 @@
             " [Open Config] Opening the init.vim
             nnoremap <leader>oc :vsplit $MYVIMRC<CR>
             
-        " -- Draw commands --
-
-            " use the default keymaps <C-L> to redraw the screen.
-            " for some reason there is a difference between :redraw! to the 
-            " default <C-L> behaviour.
-            nnoremap <leader>d <C-L>
-
         " -- Blame commands --
 
             vnoremap <leader>b :call <SID>BlameLaunch()<CR>
@@ -401,6 +389,30 @@
                 
                 call TerminalLaunch(l:complete_command, "", 2, 1, 1)
             endfunction
+
+    " --- Scope ---
+
+        function! s:ScopeOnExit(job_id, data, event)
+            " relead the new cscope db
+            execute ":cs kill -1" 
+            execute ":cs add cscope.out" 
+
+            echo "Tags updated!"
+        endfunction
+
+        function! s:ScopeUpdate()
+            let l:scope_command = ""
+            if &filetype ==# 'python'
+                let l:scope_command = "/home/s/scripts/ctags_py.sh"
+            elseif &filetype ==# 'c' || &filetype == 'cpp' || &filetype ==# 'make'
+                let l:scope_command = "/home/s/scripts/ctags_c.sh"
+            endif
+
+            if executable(l:scope_command)
+                echo "Tags are updatings..."
+                call jobstart([l:scope_command], {'on_exit': function('s:ScopeOnExit')})
+            endif
+        endfunction
 
     " --- Jumper ---
 
