@@ -1,1 +1,5 @@
+Configure the keymap layout using the config.qmk.fm website:
 https://config.qmk.fm/#/handwired/dactyl_manuform/4x6/LAYOUT
+
+Use the QMK Toolbox to flush the firmware to the keyboard:
+https://github.com/qmk/qmk_toolbox
