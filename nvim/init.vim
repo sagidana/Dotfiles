@@ -29,6 +29,7 @@
     set mouse=a                 " enable mouse support (selection, resize).
     set tags=tags               " enable ctags
     set clipboard+=unnamedplus
+    let g:markdown_folding=1    " enable markdown folding - Finally!
 
     " -- Status Line --
     set statusline=
