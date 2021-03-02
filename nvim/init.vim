@@ -88,7 +88,12 @@
 
     " highlight yanked text, lets see if I can start yanking without visual-mode...
     au TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=200, on_visual=true}
-
+    
+    " automatically set the C-w = work on quickfix (set equal size)
+    augroup quickfix
+        autocmd!
+        autocmd FileType qf setlocal nowinfixheight
+    augroup END
 
 """ ---- Hex editing ----
 
