@@ -153,9 +153,10 @@
     vnoremap > >gv
     vnoremap < <gv
     
-    " paste only what yanked and not deleted before.
     " *** in visual mode only ***
-    vnoremap p "0p
+    " We re-yank the text we just pasted and go to the end of the pasted text.
+    " Reason: we want to be able to redo the replace operation we just did.
+    xnoremap <expr> p 'pgv"'.v:register.'y`>'
 
     " Search for visually selected text
     vnoremap / y/\V<C-R>=escape(@",'/\')<CR><CR>
