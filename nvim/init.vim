@@ -40,7 +40,14 @@
     set statusline+=\ %l:%c     " show line:column
     set statusline+=\ [%p%%]    " the precentage we in the file
     
-    let g:markdown_folding=1
+    let g:markdown_folding=1    " enable markdown folding - Finally!
+    " Fix syntax highlighting bugs for markdown:
+    " create the file: "~/.config/nvim/after/syntax/markdown.vim"
+    " put in the file: "syntax sync fromstart"
+    " I can't put this command in the init.vim because it happens too soon. we need this 
+    " command to run after the syntax rules for markdown are loaded, otherwise the sync will 
+    " be cleared by the rules loaded. The way to do that is using the after directory of vim
+    " and we do that only for markdown (markdown.vim).
 
     " whitespace characters
     " do 'set list/nolist' to show/hide whitespace characters
