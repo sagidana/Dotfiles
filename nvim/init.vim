@@ -29,16 +29,6 @@
     set mouse=a                 " enable mouse support (selection, resize).
     set tags=tags               " enable ctags
     set clipboard+=unnamedplus
-    
-    " -- Markdown configuration --
-    let g:markdown_folding=1    " enable markdown folding - Finally!
-    " Fix syntax highlighting bugs for markdown:
-    " create the file: "~/.config/nvim/after/syntax/markdown.vim"
-    " put in the file: "syntax sync fromstart"
-    " I can't put this command in the init.vim because it happens too soon. we need this 
-    " command to run after the syntax rules for markdown are loaded, otherwise the sync will 
-    " be cleared by the rules loaded. The way to do that is using the after directory of vim
-    " and we do that only for markdown (markdown.vim).
 
     " -- Status Line --
     set statusline=
@@ -49,11 +39,13 @@
     set statusline+=%=          " all settings after this are alligned right
     set statusline+=\ %l:%c     " show line:column
     set statusline+=\ [%p%%]    " the precentage we in the file
+    
+    let g:markdown_folding=1
 
     " whitespace characters
     " do 'set list/nolist' to show/hide whitespace characters
-    " set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
-    " set listchars=eol:¬,tab:>·
+    set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
+    set listchars=eol:¬,tab:>·
 
     if has('cscope')
         set cscopetag 
@@ -88,12 +80,26 @@
 
     " highlight yanked text, lets see if I can start yanking without visual-mode...
     au TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=200, on_visual=true}
-    
-    " automatically set the C-w = work on quickfix (set equal size)
-    augroup quickfix
+
+    " alias vim='nvim -c "let g:tty='\''$(tty)'\''"'
+    " function Osc52Yank()
+        " let buffer=system('base64 | tr -d "\n"', @0)
+        " let buffer="\e]52;c;".buffer."\e\\"
+        " call writefile([buffer], g:tty, 'b')
+    " endfunction
+
+    " augroup Yank
+        " autocmd!
+        " autocmd TextYankPost * if v:event.operator ==# 'y' | call Osc52Yank() | endif
+    " augroup END
+
+    " unsetting the quickfix window attributes winfixheight and winfixwidth so
+    " CTRL-W= will resize the quickfix size
+    augroup QuickFix
         autocmd!
-        autocmd FileType qf setlocal nowinfixheight
+        autocmd FileType qf set nowinfixheight | set nowinfixwidth
     augroup END
+
 
 """ ---- Hex editing ----
 
@@ -184,8 +190,11 @@
 
         " -- Update commands
 
-            " [Update Scope] Evaluating the vimrc
+            " [Update Scope] 
             nnoremap <silent> <leader>us :call <SID>ScopeUpdate()<CR>
+
+            " [Update JumpList] 
+            nnoremap <leader>uj :call <SID>JumpListLoad()<CR>
             
         " -- Evlauate commands
 
@@ -216,7 +225,11 @@
             nnoremap <leader>z8 :set foldlevel=8<CR>
             nnoremap <leader>z9 :set foldlevel=9<CR>
 
-        " -- Toggle commands --
+        " -- Mark commands --
+
+            nnoremap <leader>mm :call <SID>MarkerMark()<CR>
+
+            nnoremap <leader>mc :call <SID>MarkerClear()<CR>
 
         " -- Find commands --
 
@@ -405,6 +418,54 @@
                 
                 call TerminalLaunch(l:complete_command, "", 2, 1, 1)
             endfunction
+        
+        " --- JumpList ---
+
+            function! JumpListOnExit()
+                let l:newqflist = []
+                let l:jumplist_line = ""
+
+                " Setting the quickfix list with the ripgrep results
+                for l:jumplist_line in g:terminal_content
+                    " check if the line is in the correct format
+                    if match(l:jumplist_line, "^.*:\\d\\+:.*$") < 0
+                        continue
+                    endif
+
+                    " echomsg l:jumplist_line
+                    let l:file_path = split(l:jumplist_line, ':')[0]
+                    let l:file_line = split(l:jumplist_line, ':')[1]
+                    let l:text = split(l:jumplist_line, ':')[2]
+
+                    " adding new entry to the new quickfix list
+                    call add(l:newqflist, {
+                                \ 'filename': l:file_path,
+                                \ 'lnum': l:file_line,
+                                \ 'text': l:text
+                                \ })
+                endfor
+
+                " setting the new quick fix list with the ripgrep resutls!
+                call setqflist(l:newqflist)
+
+                " open quickfix list in case there are results
+                if len(l:newqflist) > 0
+                    execute "silent! normal! :cw\r"
+                endif
+            endfunction
+
+            function! s:JumpListLoad()
+                call inputsave()
+                let l:file_path = input("jumplist file_path:")
+                call inputrestore()
+                " this command let me run any command from the linux git repo
+                " directory.
+                let l:command = "cat ".l:file_path
+                echomsg l:command
+                
+                " call TerminalLaunch(l:command, "silent! normal! :call JumpListOnExit()\r", 2, 1, 0)
+                call TerminalLaunch(l:command, "normal! :call JumpListOnExit()\r", 2, 1, 0)
+            endfunction
 
     " --- Scope ---
 
@@ -419,9 +480,9 @@
         function! s:ScopeUpdate()
             let l:scope_command = ""
             if &filetype ==# 'python'
-                let l:scope_command = "/home/s/scripts/ctags_py.sh"
+                let l:scope_command = "/home/s/Scripts/ctags_python.sh"
             elseif &filetype ==# 'c' || &filetype == 'cpp' || &filetype ==# 'make'
-                let l:scope_command = "/home/s/scripts/ctags_c.sh"
+                let l:scope_command = "/home/s/Scripts/ctags_c.sh"
             endif
 
             if executable(l:scope_command)
@@ -430,7 +491,309 @@
             endif
         endfunction
 
+    " --- Marker ---
+
+        function! s:MarkerClear()
+            highlight clear
+            call clearmatches()
+            " make the highlights changes to take effect
+            redraw
+        endfunction
+
+        function! s:MarkerMark()
+            highlight clear
+            call clearmatches()
+            highlight Marker_1 ctermfg=magenta
+			for d in getqflist()
+                let l:lnum = d.lnum
+                if d.bufnr == bufnr('%')
+                    let l:pattern = "\\%".l:lnum."l"
+                    call matchadd('Marker_1', l:pattern, 1)
+                endif
+			endfor
+            " make the highlights changes to take effect
+            redraw
+        endfunction
+
     " --- Jumper ---
+
+        function! s:GetLineByNumber(lines, line_number)
+            for l:line in a:lines
+                if l:line[0] == a:line_number
+                    return l:line
+                endif
+            endfor
+            return [-1]
+        endfunction
+        
+        function! s:HighlightMatches(matches)
+            " clear everything before highlight new.
+            highlight clear
+            call clearmatches()
+
+            highlight Jumper_1 ctermfg=black ctermbg=green
+            highlight Jumper_2 ctermfg=black ctermbg=blue
+
+            for l:_match in a:matches
+                let l:line = l:_match[0]
+                let l:col_start = l:_match[1]
+                let l:col_end = l:_match[2] + 1
+
+                let l:pattern = "\\%".l:line."l\\%>".l:col_start."c\\%<".l:col_end."c"
+
+                call matchadd('Jumper_1', l:pattern, 1)
+
+                let l:pattern = "\\%".l:line."l\\%".l:col_end."c"
+                call matchadd('Jumper_2', l:pattern, 2)
+            endfor
+
+            " make the highlights changes to take effect
+            redraw
+        endfunction
+
+        function! s:IsCandidate(matches, line_number, col_number)
+            " if the first run always return true
+            if a:matches[0][0] == -1
+                return a:col_number
+            endif
+
+            for l:_match in a:matches
+                if l:_match[0] == a:line_number && l:_match[2] == a:col_number
+                    return _match[1]
+                endif
+            endfor
+            return -1
+        endfunction
+
+        function! s:ExpandMatches(lines, matches)
+            let l:new_matches = []
+            let l:duplicates = []
+            for l:_match in a:matches
+                let l:_match_str = <SID>GetLineByNumber(a:lines, l:_match[0])[1][l:_match[1]:]
+
+                let l:longest_match = 0
+                let l:multiple_matches = 0
+                for l:__match in a:matches
+                    " ignore if the same match
+                    if l:__match[0] == l:_match[0] && l:__match[1] == l:_match[1] && l:__match[2] == l:__match[2]
+                        continue
+                    endif
+
+                    let l:__match_str = <SID>GetLineByNumber(a:lines, l:__match[0])[1][l:__match[1]:]
+
+                    let l:current_match_len = 0
+
+                    let l:loop_len = len(l:_match_str)
+                    while l:current_match_len < l:loop_len
+                        if l:_match_str[l:current_match_len] != l:__match_str[l:current_match_len]
+                            break
+                        endif
+                        let l:current_match_len += 1
+                    endwhile
+
+                    " check if we got to the end of the line.
+                    " if we did we have duplicates
+                    if l:current_match_len == len(l:_match_str)
+                        let l:multiple_matches = 1
+                        let l:longest_match = l:current_match_len
+                    elseif l:current_match_len > l:longest_match
+                        let l:longest_match = l:current_match_len
+                        let l:multiple_matches = 0
+                    elseif l:current_match_len == l:longest_match && l:__match_str[l:current_match_len] == l:_match_str[l:current_match_len]
+                        let l:multiple_matches = 1
+                    endif
+                endfor
+
+                " adding the new expanded match
+                call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+
+                " if there are multiple matches add it to the duplicates so we
+                " can uniquely identify them later.
+                if l:multiple_matches == 1
+                    call add(l:duplicates, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                endif
+
+                " if l:longest_match == len(l:_match_str) || l:multiple_matches == 1
+                    " let l:found_in_duplicates = 0
+                    " " add to matches if the first one
+                    " for l:dup in l:duplicates
+                        " if l:dup[0] == l:_match[0] && l:dup[1] == l:_match[1]
+                            " let l:found_in_duplicates = 1
+                            " break
+                        " endif
+                    " endfor 
+
+                    " " add only the first to the matches.
+                    " if l:found_in_duplicates == 0
+                        " call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                    " endif
+
+                    " call add(l:duplicates, [l:_match[0], l:_match[1]])
+                " else
+                    " adding the new expanded match
+                    " call add(l:new_matches, [l:_match[0], l:_match[1], l:_match[1] + l:longest_match])
+                " endif
+            endfor
+            return [l:new_matches, l:duplicates]
+        endfunction
+
+        function! s:AllMatchesTheSame(lines, matches)
+            " getting the first match to compare
+            let l:line = <SID>GetLineByNumber(a:lines, a:matches[0][0])
+            let l:memory = l:line[1][a:matches[0][1]:a:matches[0][2]]
+
+            for l:_match in a:matches
+                let l:curr_line = <SID>GetLineByNumber(a:lines, l:_match[0])
+                if l:curr_line[0] == -1
+                    continue
+                endif
+                let l:_match_str = l:curr_line[1][l:_match[1]:l:_match[2]]
+                if l:memory != l:_match_str
+                    return 0
+                endif
+            endfor
+            return 1
+        endfunction
+
+        function! s:GetEndOfLineMatches(lines, prev_matches)
+            let l:results = []
+
+            for l:_match in a:prev_matches
+                let l:line = <SID>GetLineByNumber(a:lines, l:_match[0])
+
+                " the match is pointing to the end of the line
+                if len(l:line[1]) == l:_match[2]
+                    call add(l:results, l:_match)
+                endif
+            endfor
+
+            return l:results
+        endfunction
+
+        function! s:SearchLines(lines, char, prev_matches)
+            let l:results = []
+
+            for l:_line in a:lines
+                let l:col_number = 0
+                for l:_char in split(l:_line[1], '\zs')
+                    let l:start_col_of_candidate = <SID>IsCandidate(a:prev_matches, l:_line[0], l:col_number)
+                    if l:start_col_of_candidate != -1
+                        if l:_char == a:char
+                            " adding the location of the match
+                            call add(l:results, [l:_line[0], l:start_col_of_candidate, l:col_number])
+                        endif
+                    endif
+                    let l:col_number += 1
+                endfor
+            endfor
+            return l:results
+        endfunction
+
+        function! s:GetVisibleLines(start_line, end_line)
+            let l:visible_lines = []
+            let l:current_line = a:start_line
+            while l:current_line != a:end_line
+                " if the line is folded, continue.
+                if foldclosed(l:current_line) != -1
+                    let l:current_line += 1
+                    continue
+                endif 
+
+                call add(l:visible_lines, [l:current_line, getline(l:current_line)])
+                let l:current_line += 1
+            endwhile
+            return l:visible_lines
+        endfunction
+
+        function! s:UniquelifyDuplicates(lines, matches, duplicates)
+            let l:new_matches = []
+
+            for l:_match in a:matches
+                let l:match_as_string = <SID>GetLineByNumber(a:lines, l:_match[0])[1][l:_match[1]:l:_match[2]]
+
+                let l:current_duplicates = []
+                for l:_dup in a:duplicates
+                    let l:dup_as_string = <SID>GetLineByNumber(a:lines, l:_dup[0])[1][l:_dup[1]:l:_dup[2]]
+
+                    if l:dup_as_string == l:match_as_string
+                        call add(l:current_duplicates, l:_dup)
+                    endif
+                endfor
+
+                " ignore non duplicates
+                if len(l:current_duplicates) == 0
+                    call add(l:new_matches, l:_match)
+                    continue
+                endif
+
+                " insert duplicates in unique way by chnaging its length
+                " all duplicates are the same, take the first one.
+                let l:new_length = 0
+                for l:_dup in l:current_duplicates
+                    call add(l:new_matches, [l:_dup[0], l:_dup[1], l:_dup[1] + l:new_length])
+
+                    " make sure we do not go beyond boundries
+                    let l:line = <SID>GetLineByNumber(a:lines, l:_dup[0])[1]
+                    if l:_dup[1] + l:new_length < len(l:line)
+                        let l:new_length += 1
+                    endif
+                endfor
+            endfor
+            return l:new_matches
+        endfunction
+
+        function! s:Jumper()
+            " line number, start column number, end column number
+            let l:matches = [[-1,-1,-1]]
+
+            let l:start_line = line('w0')
+            let l:end_line = line('w$')
+
+            let l:duplicates = [[line('.') - l:start_line, col('.')]]
+            let l:visible_lines = <SID>GetVisibleLines(l:start_line, l:end_line)
+
+            while 1
+                let l:user_char_number = getchar()
+                " if user press ESC
+                if l:user_char_number == 27
+                    if len(l:duplicates) == 0
+                        break
+                    endif
+                    call setpos('.', [0, l:duplicates[0][0], l:duplicates[0][1], 0])
+                    break
+                " if user press ENTER
+                elseif l:user_char_number == 13
+                    let l:matches = <SID>GetEndOfLineMatches(l:visible_lines, l:matches)
+                " if user press valid character
+                else
+                    let l:user_char = nr2char(l:user_char_number)
+                    let l:matches = <SID>SearchLines(l:visible_lines, l:user_char, l:matches)
+                endif
+
+                " this will expand the matches until the next uniqe way to
+                " identify itself.
+                let l:expand_result = <SID>ExpandMatches(l:visible_lines, l:matches)
+                let l:matches = l:expand_result[0]
+                let l:duplicates = l:expand_result[1]
+
+                " this will make the duplicates distinguisables
+                let l:matches = <SID>UniquelifyDuplicates(l:visible_lines, l:matches, l:duplicates)
+
+                " if found move cursor
+                if len(l:matches) == 1
+                    call setpos('.', [0, l:matches[0][0], l:matches[0][1] + 1, 0 ])
+                    break
+                elseif len(l:matches) == 0
+                    break
+                endif
+
+                call <SID>HighlightMatches(l:matches)
+            endwhile
+
+            " clearing the highlight we made.
+            highlight clear
+            call clearmatches()
+        endfunction
 
         function! s:GetLineByNumber(lines, line_number)
             for l:line in a:lines
