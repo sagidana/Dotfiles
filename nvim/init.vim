@@ -1226,6 +1226,8 @@
                     let l:comment_syntax = "#"
                 elseif &filetype ==# 'vim'
                     let l:comment_syntax = "\""
+		elseif &filetype ==# 'javascript'
+                    let l:comment_syntax = "//"
                 elseif &filetype ==# 'conf'
                     let l:comment_syntax = "#"
                 elseif &filetype ==# 'c'
