@@ -182,14 +182,14 @@
 
     """ --- Cscope Bindings ---
 
-        nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>	
-        nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-        nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\>s :lcs find s <C-R>=expand("<cword>")<CR><CR>	
+        nmap <C-\>g :lcs find g <C-R>=expand("<cword>")<CR><CR>	
+        nmap <C-\>c :lcs find c <C-R>=expand("<cword>")<CR><CR>	
+        nmap <C-\>t :lcs find t <C-R>=expand("<cword>")<CR><CR>	
+        nmap <C-\>e :lcs find e <C-R>=expand("<cword>")<CR><CR>	
+        nmap <C-\>f :lcs find f <C-R>=expand("<cfile>")<CR><CR>	
+        nmap <C-\>i :lcs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+        nmap <C-\>d :lcs find d <C-R>=expand("<cword>")<CR><CR>
 
     """ --- Leader configuration ---
 
@@ -379,11 +379,11 @@
                 endfor
 
                 " setting the new quick fix list with the ripgrep resutls!
-                call setqflist(l:newqflist)
+                call setloclist(0, l:newqflist)
 
                 " open quickfix list in case there are results
                 if len(l:newqflist) > 0
-                    execute "silent! normal! :cw\r"
+                    execute "silent! normal! :lopen\r"
                 endif
             endfunction
 
