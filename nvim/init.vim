@@ -40,6 +40,8 @@
     set statusline+=\ %l:%c     " show line:column
     set statusline+=\ [%p%%]    " the precentage we in the file
     
+    set jumpoptions+=stack	" set the CTRL-o and CTRL-i behave reasonably.. :0
+    
     let g:markdown_folding=1    " enable markdown folding - Finally!
     " Fix syntax highlighting bugs for markdown:
     " create the file: "~/.config/nvim/after/syntax/markdown.vim"
