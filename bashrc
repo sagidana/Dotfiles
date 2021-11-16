@@ -16,3 +16,7 @@ PS1='[\u@\h \W]\$ '
 VISUAL=nvim; export VISUAL EDITOR=nvim; export EDITOR
 
 source ~/git-completion.bash
+
+# Save history from every terminal opened in the machine!! 
+# this is priceless!
+export PROMPT_COMMAN='history -a'
