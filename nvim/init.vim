@@ -108,6 +108,12 @@
         autocmd!
         autocmd FileType qf set nowinfixheight | set nowinfixwidth
     augroup END
+    
+    " When closing a tab, return to the previously focused tab.
+    let g:tablist = [1, 1]
+    autocmd TabLeave * let g:tablist[0] = g:tablist[1]
+    autocmd TabLeave * let g:tablist[1] = tabpagenr()
+    autocmd TabClosed * exe "normal " . g:tablist[0] . "gt"
 
 
 """ ---- Hex editing ----
