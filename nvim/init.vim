@@ -1,10 +1,10 @@
 """ ---- Plug configuration ----  
 
-    call plug#begin(stdpath('data') . '/plugged')
+    " call plug#begin(stdpath('data') . '/plugged')
 
     " Plug 'neovim/nvim-lspconfig'
 
-    call plug#end()
+    " call plug#end()
 
 
 """ ---- General configuration ---- 
@@ -246,6 +246,13 @@
 
             nnoremap <leader>mc :call <SID>MarkerClear()<CR>
 
+        " -- Vimable commands --
+
+            nnoremap <leader>vv :call <SID>VimableChooseVimable()<CR>
+
+            nnoremap <silent> <leader>ve :<C-u>set operatorfunc=<SID>VimableExecuteOperator<CR>g@
+            vnoremap <silent> <leader>ve :<C-u>call <SID>VimableExecuteOperator(visualmode())<CR>
+
         " -- Find commands --
 
             nnoremap <leader>f :call <SID>Jumper()<CR>
@@ -291,6 +298,53 @@
 
 
 """ ---- Custom Plugins ----
+
+    " --- Http Utils ---
+
+        function! s:HttpDoubleEscapeString(string)
+            let l:string = ""
+            let l:index = 0
+            let l:len = len(a:string)
+            while l:index < l:len
+                if a:string[l:index] == '"'
+                    " echon a:string[l:index]
+                    let l:string = l:string . "\\" . "\""
+                else
+
+                    let l:string = l:string . a:string[l:index]
+                endif
+
+                let l:index += 1
+            endwhile
+            return l:string
+        endfunction
+
+        function! HttpPost(url, data)
+            let l:curl_command = ""
+            let l:result = ""
+
+            let l:data = <SID>HttpDoubleEscapeString(a:data)
+            let l:curl_command = "curl -s -X POST -H 'Content-Type: text/html' " . a:url . " -d \"" . l:data . "\""
+            let l:result = system(l:curl_command)
+            return l:result
+        endfunction
+
+        function! HttpGet(url, parameters)
+            let l:curl_command = ""
+            let l:parameters = ""
+            let l:parameter = ""
+            let l:result = ""
+
+            for l:parameter in items(a:parameters)
+                let l:parameters = l:parameters . "&" . l:parameter[0] . "=" . l:parameter[1]
+            endfor
+
+            let l:curl_command = "curl -s -X GET " . a:url . "?" .l:parameters
+
+            let l:result = system(l:curl_command)
+            " echomsg l:result
+            return l:result
+        endfunction
 
     " --- Terminals Applicaitons ---
         
@@ -482,6 +536,170 @@
                 call TerminalLaunch(l:command, "normal! :call JumpListOnExit()\r", 2, 1, 0)
             endfunction
 
+    " --- Vimable ---
+
+        function! s:VimableGetVimables()
+            let vimables = {}
+            let files = glob("/tmp/vimable_*", v:true, v:true)
+            for file in files
+                let url = readfile(file)[0]
+
+                " Extract he name of the vimable
+                let name = matchlist(file, '/tmp/vimable_\(.*\)')[1]
+                let vimables[name] = url
+            endfor
+            return vimables
+        endfunction
+
+        function! s:VimableChooseVimable()
+            let vimables = <SID>VimableGetVimables()
+
+            let choices = ""
+            let index = 1
+            let mapping = {}
+            for vimable in items(vimables)
+                let mapping[index] = vimable[0]
+                let choices = choices . printf("&%d %s\n", index, vimable[0])
+                let index +=1
+            endfor
+            let choices = choices[:-2]
+
+            let choice = confirm("Enter the number of the vimable:", choices)
+
+            " Initialize the vimable to the local buffer
+            let b:vimable =   {  
+                            \   "name" :mapping[choice],
+                            \   "url" : vimables[mapping[choice]]
+                            \ }
+
+            " Hook vim bindings for vimable functionality:
+            " NOTE: Make sure all the changes apply only in the local buffer scope!
+            setlocal completefunc=VimableCompletion " CTRL-x + CTRL-u to launch
+            setlocal filetype=python
+        endfunction
+
+        function! s:VimableExecute(code)
+            if !exists('b:vimable')
+                echo "Vimable not initialized!"
+                return 
+            endif 
+
+            let name = b:vimable['name']
+            let url = b:vimable['url']
+
+            let execute_url = url . "execute"
+            let response = HttpPost(execute_url, a:code)
+
+            return response
+        endfunction
+
+        function! s:VimableGetCompletion(base)
+            if !exists('b:vimable')
+                echo "Vimable not initialized!"
+                return []
+            endif 
+
+            let name = b:vimable['name']
+            let url = b:vimable['url']
+
+            let completion_url = url . "completion"
+
+            let matches = HttpPost(completion_url, a:base)
+
+            let matches = split(matches, ",")
+
+            echom a:base
+
+            return matches
+        endfunction
+
+        function! VimableCompletion(findstart, base)
+            if a:findstart
+                " locate the start of the word. 
+                let line = getline('.')
+                let start = col('.') - 1
+                while start > 0 && line[start - 1] =~ '\a'
+                    let start -= 1
+                endwhile
+                return start
+            else
+                " In vimable case always return from the
+                " start of the line, and let the app itself decides whats best.
+                " locate the start of the word
+                let line = getline('.')
+                let start = col('.') - 1
+                let correct_base = line[:start-1]
+                return <SID>VimableGetCompletion(correct_base) " Should contain line[:curr_col]
+            endif
+        endfunction
+
+        function! s:MainVimableExecuteOperator(start_range, end_range)
+                let l:to_execute = ""
+
+                if line(a:start_range) != line(a:end_range)
+                    let l:start_line = line(a:start_range)
+                    let l:start_col = col(a:start_range)
+                    let l:end_line = line(a:end_range)
+                    let l:end_col = col(a:end_range)
+
+                    let l:to_execute = getline(l:start_line)
+                    let l:to_execute = l:to_execute[l:start_col - 1:] . "\n"
+
+                    let l:start_line += 1
+                    while l:start_line < l:end_line
+                        let l:to_execute = l:to_execute . getline(l:start_line) . "\n"
+                        let l:start_line += 1
+                    endwhile
+
+                    let l:to_execute = l:to_execute . getline(l:end_line)[:l:end_col-1] . "\n"
+                else 
+                    let l:to_execute = getline(line(a:start_range))
+                    let l:to_execute = l:to_execute[col(a:start_range) - 1:col(a:end_range) - 1]
+                endif
+
+                let l:response = <SID>VimableExecute(l:to_execute)
+                echon l:response
+        endfunction
+
+        function! s:VimableExecuteOperator(type)
+            " Save unnamed register's content
+            let l:saved_unnamed_register = @@
+            let l:saved_cursor_position = getcurpos()
+
+            if a:type ==# 'v'
+                let l:start_range = "'<"
+                let l:end_range = "'>"
+
+                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+            elseif a:type ==# 'V'
+                let l:start_range = "'<"
+                let l:end_range = "'>"
+
+                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+            elseif a:type ==# "\<c-v>"                          " Visuall Block mode
+                let l:start_range = "'<"
+                let l:end_range = "'>"
+
+                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+            elseif a:type ==# 'line'
+                let l:start_range = "'["
+                let l:end_range = "']"
+
+                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+            elseif a:type ==# 'char'
+                let l:start_range = "'["
+                let l:end_range = "']"
+
+                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+            endif
+
+            " Restore unnamed register's content
+            let @@ = l:saved_unnamed_register 
+
+            " Restore cursor position
+            call setpos('.', l:saved_cursor_position)
+        endfunction
+        
     " --- Scope ---
 
         function! s:ScopeOnExit(job_id, data, event)
