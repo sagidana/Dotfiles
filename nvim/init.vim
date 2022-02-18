@@ -250,8 +250,11 @@
 
             nnoremap <leader>vv :call <SID>VimableChooseVimable()<CR>
 
-            nnoremap <silent> <leader>ve :<C-u>set operatorfunc=<SID>VimableExecuteOperator<CR>g@
-            vnoremap <silent> <leader>ve :<C-u>call <SID>VimableExecuteOperator(visualmode())<CR>
+            nnoremap <silent> <leader>ve :<C-u>set operatorfunc=<SID>VimableExecuteEchoOperator<CR>g@
+            vnoremap <silent> <leader>ve :<C-u>call <SID>VimableExecuteEchoOperator(visualmode())<CR>
+
+            nnoremap <silent> <leader>vE :<C-u>set operatorfunc=<SID>VimableExecuteBufferOperator<CR>g@
+            vnoremap <silent> <leader>vE :<C-u>call <SID>VimableExecuteBufferOperator(visualmode())<CR>
 
         " -- Find commands --
 
@@ -658,39 +661,40 @@
                 endif
 
                 let l:response = <SID>VimableExecute(l:to_execute)
-                echon l:response
+                return l:response
         endfunction
 
         function! s:VimableExecuteOperator(type)
             " Save unnamed register's content
             let l:saved_unnamed_register = @@
             let l:saved_cursor_position = getcurpos()
+            let l:response = ""
 
             if a:type ==# 'v'
                 let l:start_range = "'<"
                 let l:end_range = "'>"
 
-                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+                let l:response = <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
             elseif a:type ==# 'V'
                 let l:start_range = "'<"
                 let l:end_range = "'>"
 
-                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+                let l:response = <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
             elseif a:type ==# "\<c-v>"                          " Visuall Block mode
                 let l:start_range = "'<"
                 let l:end_range = "'>"
 
-                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+                let l:response = <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
             elseif a:type ==# 'line'
                 let l:start_range = "'["
                 let l:end_range = "']"
 
-                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+                let l:response = <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
             elseif a:type ==# 'char'
                 let l:start_range = "'["
                 let l:end_range = "']"
 
-                call <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
+                let l:response = <SID>MainVimableExecuteOperator(l:start_range, l:end_range)
             endif
 
             " Restore unnamed register's content
@@ -698,6 +702,19 @@
 
             " Restore cursor position
             call setpos('.', l:saved_cursor_position)
+            return l:response
+        endfunction
+
+        function! s:VimableExecuteEchoOperator(type)
+            let l:response = <SID>VimableExecuteOperator(a:type)
+            echon l:response
+        endfunction
+
+        function! s:VimableExecuteBufferOperator(type)
+            let l:response = <SID>VimableExecuteOperator(a:type)
+            execute ":new"
+            call nvim_paste(l:response,v:true, -1)
+            " call append(0,l:response)
         endfunction
         
     " --- Scope ---
