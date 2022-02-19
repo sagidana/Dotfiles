@@ -32,6 +32,7 @@
 
     " -- Status Line --
     set statusline=
+    set statusline+=\ %n        " buffer number
     set statusline+=\ %M        " is the file has being modified?
     set statusline+=\ %y        " the file type
     set statusline+=\ %r        " is read-only?
