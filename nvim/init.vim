@@ -54,8 +54,9 @@
 
     " whitespace characters
     " do 'set list/nolist' to show/hide whitespace characters
-    set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
-    set listchars=eol:¬,tab:>·
+    " set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:␣
+    set listchars=tab:>·,trail:~
+    set list
 
     if has('cscope')
         set cscopetag 
