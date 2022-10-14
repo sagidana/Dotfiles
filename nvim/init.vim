@@ -40,9 +40,9 @@
     set statusline+=%=          " all settings after this are alligned right
     set statusline+=\ %l:%c     " show line:column
     set statusline+=\ [%p%%]    " the precentage we in the file
-    
+
     set jumpoptions+=stack	" set the CTRL-o and CTRL-i behave reasonably.. :0
-    
+
     let g:markdown_folding=1    " enable markdown folding - Finally!
     " Fix syntax highlighting bugs for markdown:
     " create the file: "~/.config/nvim/after/syntax/markdown.vim"
@@ -83,8 +83,8 @@
     filetype plugin on
 
     " allows auto-indenting depending on file type
-    filetype plugin indent on  
-    
+    filetype plugin indent on
+
     " only for c use syntax fold method
     autocmd FileType c setlocal foldmethod=syntax
     autocmd FileType cpp setlocal foldmethod=syntax
@@ -110,7 +110,7 @@
         autocmd!
         autocmd FileType qf set nowinfixheight | set nowinfixwidth
     augroup END
-    
+
     " When closing a tab, return to the previously focused tab.
     let g:tablist = [1, 1]
     autocmd TabLeave * let g:tablist[0] = g:tablist[1]
@@ -157,8 +157,8 @@
 
     " somehow the only shceme that actualy worked for me in all
     " use cases is the default one... WTF?
-    " colorscheme default
-    colorscheme monokai
+    colorscheme default
+    " colorscheme monokai
 
 
 """ ---- Bindings ----
@@ -175,7 +175,7 @@
     " Change indentation and keep visualized!
     vnoremap > >gv
     vnoremap < <gv
-    
+
     " *** in visual mode only ***
     " We re-yank the text we just pasted and go to the end of the pasted text.
     " Reason: we want to be able to redo the replace operation we just did.
@@ -212,25 +212,25 @@
 
             " [Update JumpList] 
             nnoremap <leader>uj :call <SID>JumpListLoad()<CR>
-            
+
         " -- Evlauate commands
 
             " [Evaluate Config] Evaluating the vimrc
             nnoremap <leader>ec :source $MYVIMRC<CR>
-            
+
         " -- Open commands
-            
+
             " [Open Config] Opening the init.vim
             nnoremap <leader>oc :vsplit $MYVIMRC<CR>
-            
+
         " -- Blame commands --
 
             vnoremap <leader>b :call <SID>BlameLaunch()<CR>
 
         " -- Folding commands --
-        
+
             nnoremap <leader>zz :set foldmethod=manual<CR>
-        
+
             nnoremap <leader>z0 :set foldlevel=0<CR>
             nnoremap <leader>z1 :set foldlevel=1<CR>
             nnoremap <leader>z2 :set foldlevel=2<CR>
@@ -263,7 +263,7 @@
             nnoremap <leader>f :call <SID>Jumper()<CR>
 
         " -- Search commands --
-           
+
             " [Search File] 
             nnoremap <leader>sf :call <SID>FZFLaunch()<CR>
 
@@ -272,7 +272,7 @@
             vnoremap <leader>sc :call <SID>RipGrepLaunch(1)<CR>
 
     """ --- Custom Operators Bindings ---
-        
+
         " -- Surround Operator
 
             nnoremap <silent> cs :call <SID>ChangeSurroundOperator()<cr>
@@ -283,7 +283,7 @@
 
             nnoremap <silent> gc :<C-u>set operatorfunc=<SID>CommentOperator<CR>g@
             vnoremap <silent> gc :<C-u>call <SID>CommentOperator(visualmode())<CR>
-        
+
         " -- Printer Operator
 
             nnoremap <silent> gp :<C-u>set operatorfunc=<SID>PrinterOperator<CR>g@
@@ -352,9 +352,9 @@
         endfunction
 
     " --- Terminals Applicaitons ---
-        
+
         " --- Common ---
-        
+
             let g:terminal_buf_id = -1
             let g:terminal_ignore_exit_code = 0
             let g:terminal_dont_close = 0
@@ -363,7 +363,7 @@
 
             function! TerminalOnExit(job_id, code, event)
                 let g:terminal_content = nvim_buf_get_lines(g:terminal_id, 0, -1, 0)
-                
+
                 " close the terminal buffer after exit.
                 if g:terminal_dont_close == 0
                     close
@@ -489,10 +489,10 @@
                 " this command let me run any command from the linux git repo
                 " directory.
                 let l:complete_command= "pushd ".l:linux_git_repo." && ".l:git_command." && popd"
-                
+
                 call TerminalLaunch(l:complete_command, "", 2, 1, 1)
             endfunction
-        
+
         " --- JumpList ---
 
             function! JumpListOnExit()
@@ -536,7 +536,7 @@
                 " directory.
                 let l:command = "cat ".l:file_path
                 echomsg l:command
-                
+
                 " call TerminalLaunch(l:command, "silent! normal! :call JumpListOnExit()\r", 2, 1, 0)
                 call TerminalLaunch(l:command, "normal! :call JumpListOnExit()\r", 2, 1, 0)
             endfunction
@@ -602,7 +602,7 @@
             if !exists('b:vimable')
                 echo "Vimable not initialized!"
                 return []
-            endif 
+            endif
 
             let name = b:vimable['name']
             let url = b:vimable['url']
@@ -718,7 +718,7 @@
             call nvim_paste(l:response,v:true, -1)
             " call append(0,l:response)
         endfunction
-        
+
     " --- Scope ---
 
         function! s:ScopeOnExit(job_id, data, event)
@@ -726,12 +726,12 @@
             execute ":cs kill -1" 
             execute ":cs add cscope.out" 
 
-            echo "cscope updated!"
+            echom "cscope updated!"
         endfunction
         function! s:CtagsOnExit(job_id, data, event)
-            echo "ctags updated!"
+            echom "ctags updated!"
         endfunction
-	function! s:ScopeUpdate()
+        function! s:ScopeUpdate()
             let l:scope_command = ""
             let l:ctags_command = ""
             if &filetype ==# 'python'
@@ -743,7 +743,7 @@
             endif
 
             echo "Tags are updatings..."
-	    call jobstart(["ctags", l:ctags_command], {'on_exit': function('s:CtagsOnExit')})
+            call jobstart(["ctags", l:ctags_command], {'on_exit': function('s:CtagsOnExit')})
             call jobstart(["cscope", l:scope_command], {'on_exit': function('s:ScopeOnExit')})
         endfunction
 
@@ -761,13 +761,13 @@
             highlight clear
             call clearmatches()
             highlight Marker_1 ctermfg=magenta
-			for d in getqflist()
+            for d in getqflist()
                 let l:lnum = d.lnum
                 if d.bufnr == bufnr('%')
                     let l:pattern = "\\%".l:lnum."l"
                     call matchadd('Marker_1', l:pattern, 1)
                 endif
-			endfor
+            endfor
             " make the highlights changes to take effect
             redraw
         endfunction
@@ -782,7 +782,7 @@
             endfor
             return [-1]
         endfunction
-        
+
         function! s:HighlightMatches(matches)
             " clear everything before highlight new.
             highlight clear
@@ -1060,7 +1060,7 @@
             endfor
             return [-1]
         endfunction
-        
+
         function! s:HighlightMatches(matches)
             " clear everything before highlight new.
             highlight clear
@@ -1329,7 +1329,7 @@
             highlight clear
             call clearmatches()
         endfunction
-    
+
     " --- Operators ---
 
         " -- Surround Operator Implementation
@@ -1394,7 +1394,7 @@
                 if search(l:left_before_character, 'bcW') !=# 0
                     execute "silent! normal! "."r".l:left_after_character
                 endif
-                
+
                 " Handle the right side
                 if search(l:right_before_character, 'W') !=# 0
                     execute "silent! normal! "."r".l:right_after_character
@@ -1471,12 +1471,12 @@
             function! s:GetCommentSyntaxCommentOperator()
                 " default will be #
                 let l:comment_syntax = "#"
-                
+
                 if &filetype ==# 'python'
                     let l:comment_syntax = "#"
                 elseif &filetype ==# 'vim'
                     let l:comment_syntax = "\""
-		elseif &filetype ==# 'javascript'
+                elseif &filetype ==# 'javascript'
                     let l:comment_syntax = "//"
                 elseif &filetype ==# 'conf'
                     let l:comment_syntax = "#"
@@ -1655,7 +1655,7 @@
             function! s:GetPrintSyntaxPrinterOperator()
                 let l:print_syntax_start = ""
                 let l:print_syntax_end = ""
-                
+
                 if &filetype ==# 'python'
                     let l:print_syntax_start = "print('{}'.format("
                     let l:print_syntax_end = "))"
@@ -1691,7 +1691,7 @@
 
                 " getting the current indentation level
                 let l:indent_level = indent(line("."))
-                
+
                 " adding spaces to match indentation.
                 while l:indent_level > 0
                     let l:line_to_append = ' '.l:line_to_append
@@ -1780,7 +1780,7 @@
                 while match(getline(line(".")), "^\\s*$") > -1
                     execute "silent! normal! j"
                 endwhile
-                
+
                 " Start viusal-line-mode
                 let l:command = "V"
 
@@ -1836,7 +1836,7 @@
 
                 " " Repeat the search \<count\> times.
                 " execute "silent! normal! ".repeat("n", a:count - 1)
-                
+
                 " " Return the user's wrapscan settings.
                 " let &wrapscan=l:saved_wrapscan
             " endfunction
@@ -1941,12 +1941,12 @@
                 " " Return the user's wrapscan settings.
                 " let &wrapscan=l:saved_wrapscan
             " endfunction
-                        
+
 
             " " -- Binding examples
 
                 " " -- Python Text Objects
-                    
+
                     " " Python for loop text object
 
                         " let g:python_for_pattern = 'for .*[:\\]$'
@@ -2086,7 +2086,7 @@
 
                             " autocmd FileType python vnoremap <buffer> <silent> iL :<c-u>call <SID>InnerOuterStatementPyTextObject(g:python_else_pattern, v:count, 1)<cr>
                             " autocmd FileType python vnoremap <buffer> <silent> aL :<c-u>call <SID>InnerOuterStatementPyTextObject(g:python_else_pattern, v:count, 0)<cr>
-                            
+
                     " " Python class text object
 
                         " let g:python_class_pattern = 'class .*:$'
@@ -2160,7 +2160,7 @@
 
                 " " Repeat the search \<count\> times.
                 " execute "silent! normal! ".repeat("n", a:count - 1)
-                
+
                 " " Return the user's wrapscan settings.
                 " let &wrapscan=l:saved_wrapscan
             " endfunction
@@ -2237,7 +2237,7 @@
             " " -- Binding examples
 
                 " " -- C Text Objects
-                    
+
                     " " C for loop text object
 
                         " let g:c_for_pattern = "^\\s*for\\s+(.*).*$"
@@ -2349,3 +2349,4 @@
 
                             " autocmd FileType c vnoremap <buffer> <silent> iM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 1)<cr>
                             " autocmd FileType c vnoremap <buffer> <silent> aM :<c-u>call <SID>InnerOuterStatementCTextObject(g:c_func_pattern, v:count, 0)<cr>
+
