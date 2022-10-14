@@ -726,22 +726,27 @@
             execute ":cs kill -1" 
             execute ":cs add cscope.out" 
 
-            echo "Tags updated!"
+            echo "cscope updated!"
         endfunction
-
-        function! s:ScopeUpdate()
+        function! s:CtagsOnExit(job_id, data, event)
+            echo "ctags updated!"
+        endfunction
+	function! s:ScopeUpdate()
             let l:scope_command = ""
+            let l:ctags_command = ""
             if &filetype ==# 'python'
-                let l:scope_command = "/home/s/Scripts/ctags_python.sh"
+                let l:ctags_command = "-Rb"
+                let l:scope_command = "-Rb"
             elseif &filetype ==# 'c' || &filetype == 'cpp' || &filetype ==# 'make'
-                let l:scope_command = "/home/s/Scripts/ctags_c.sh"
+                let l:ctags_command = "-Rb"
+                let l:scope_command = "-Rb"
             endif
 
-            if executable(l:scope_command)
-                echo "Tags are updatings..."
-                call jobstart([l:scope_command], {'on_exit': function('s:ScopeOnExit')})
-            endif
+            echo "Tags are updatings..."
+	    call jobstart(["ctags", l:ctags_command], {'on_exit': function('s:CtagsOnExit')})
+            call jobstart(["cscope", l:scope_command], {'on_exit': function('s:ScopeOnExit')})
         endfunction
+
 
     " --- Marker ---
 
