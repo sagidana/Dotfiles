@@ -157,14 +157,14 @@
 
     " somehow the only shceme that actualy worked for me in all
     " use cases is the default one... WTF?
-    colorscheme default
-    " colorscheme monokai
+    " colorscheme default
+    colorscheme monokai
 
 
 """ ---- Bindings ----
 
     " Disable search highlights until next search at <esc> press.
-    nnoremap <esc> :nohlsearch<return><esc>
+    nnoremap <esc> :nohlsearch<CR>:call <SID>EnterNormalMode()<CR><esc>
 
     " Bind tab to fold toggle.
     nnoremap <tab> za
@@ -204,6 +204,10 @@
     """ --- Leader configuration ---
 
         let mapleader = "\<space>"  " set leader as space
+
+        " -- Trailing Whitespace
+
+            nnoremap <silent> <leader>t :call <SID>ShowTrailingWhitespace()<CR>
 
         " -- Update commands
 
@@ -303,6 +307,17 @@
 
 
 """ ---- Custom Plugins ----
+
+    " --- Misc ---
+
+        function! s:ShowTrailingWhitespace()
+            highlight UselessWhitespace ctermbg=red guibg=red
+            match UselessWhitespace /\s\+$/
+        endfunction
+
+        function! s:EnterNormalMode()
+            call clearmatches()
+        endfunction
 
     " --- Http Utils ---
 
