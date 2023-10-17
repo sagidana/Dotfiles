@@ -472,7 +472,7 @@
                 endif
 
                 if len(l:to_search) > 0
-                    l:args = "--max-columns 200 -g '!/resources' -g '!/tags' --vimgrep "
+                    let l:args = "--max-columns 200 -g '!/resources' -g '!/tags' --vimgrep "
                     call TerminalLaunch("rg ".l:args.l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1, 0)
                 endif
             endfunction
