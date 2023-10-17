@@ -41,7 +41,7 @@
     set statusline+=\ %l:%c     " show line:column
     set statusline+=\ [%p%%]    " the precentage we in the file
 
-    set jumpoptions+=stack	" set the CTRL-o and CTRL-i behave reasonably.. :0
+    " set jumpoptions+=stack	" set the CTRL-o and CTRL-i behave reasonably.. :0
 
     let g:markdown_folding=1    " enable markdown folding - Finally!
     " Fix syntax highlighting bugs for markdown:
@@ -472,7 +472,8 @@
                 endif
 
                 if len(l:to_search) > 0
-                    call TerminalLaunch("rg --vimgrep ".l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1, 0)
+                    l:args = "--max-columns 200 -g '!/resources' -g '!/tags' --vimgrep "
+                    call TerminalLaunch("rg ".l:args.l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1, 0)
                 endif
             endfunction
 
