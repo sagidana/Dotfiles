@@ -190,16 +190,10 @@
         " nnoremap <silent> gh    <cmd>lua vim.lsp.buf.hover()<CR>
         " nnoremap <silent> gx    <cmd>lua vim.lsp.buf.references()<CR>
 
-    """ --- Cscope Bindings ---
+    """ --- Scope Bindings ---
 
-        nmap <C-\>s :lcs find s <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>g :lcs find g <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>c :lcs find c <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>t :lcs find t <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>e :lcs find e <C-R>=expand("<cword>")<CR><CR>	
-        nmap <C-\>f :lcs find f <C-R>=expand("<cfile>")<CR><CR>	
-        nmap <C-\>i :lcs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-        nmap <C-\>d :lcs find d <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <C-\>c :call <SID>ScopeXRefs()<CR>
+        nnoremap <C-\>s :call <SID>ScopeXSyms()<CR>
 
     """ --- Leader configuration ---
 
@@ -210,9 +204,6 @@
             nnoremap <silent> <leader>t :call <SID>ShowTrailingWhitespace()<CR>
 
         " -- Update commands
-
-            " [Update Scope] 
-            nnoremap <silent> <leader>us :call <SID>ScopeUpdate()<CR>
 
             " [Update JumpList] 
             nnoremap <leader>uj :call <SID>JumpListLoad()<CR>
@@ -556,6 +547,59 @@
                 call TerminalLaunch(l:command, "normal! :call JumpListOnExit()\r", 2, 1, 0)
             endfunction
 
+        " --- Scope ---
+
+            function! ScopeXRefsOnExit()
+                let l:newqflist = []
+                let l:ripgrep_line = ""
+
+                " Setting the quickfix list with the ripgrep results
+                for l:ripgrep_line in g:terminal_content
+                    " check if the line is in the correct format
+                    if match(l:ripgrep_line, "^.*:\\d\\+:\\d\\+:.*$") < 0
+                        continue
+                    endif
+
+                    let l:file_path = split(l:ripgrep_line, ':')[0]
+                    let l:file_line = split(l:ripgrep_line, ':')[1]
+                    let l:file_column = split(l:ripgrep_line, ':')[2]
+                    let l:text = split(l:ripgrep_line, ':')[3]
+
+                    " adding new entry to the new quickfix list
+                    call add(l:newqflist, {
+                                \ 'filename': l:file_path,
+                                \ 'lnum': l:file_line,
+                                \ 'text': l:text
+                                \ })
+                endfor
+
+                " setting the new quick fix list with the ripgrep resutls!
+                call setloclist(0, l:newqflist)
+
+                " open quickfix list in case there are results
+                if len(l:newqflist) > 0
+                    execute "silent! normal! :lopen\r"
+                endif
+            endfunction
+
+            function! s:ScopeXSyms()
+                let l:cword = expand("<cword>")
+                let l:excluded = "-g '!/resources' -g '!/tags' -g '!/*.out$'"
+                let l:args = "--vimgrep --max-columns 200 ".l:excluded
+                let l:command = "rg ".l:args." '\\W".l:cword."\\W.*'"
+
+                call TerminalLaunch(l:command, "silent! normal! :call ScopeXRefsOnExit()\r", 2, 1, 0)
+            endfunction
+
+            function! s:ScopeXRefs()
+                let l:cword = expand("<cword>")
+                let l:excluded = "-g '!/resources' -g '!/tags' -g '!/*.out$'"
+                let l:args = "--vimgrep --max-columns 200 ".l:excluded
+                let l:command = "rg ".l:args." '\\W".l:cword."\\(.*'"
+
+                call TerminalLaunch(l:command, "silent! normal! :call ScopeXRefsOnExit()\r", 2, 1, 0)
+            endfunction
+
     " --- Vimable ---
 
         function! s:VimableGetVimables()
@@ -733,35 +777,6 @@
             call nvim_paste(l:response,v:true, -1)
             " call append(0,l:response)
         endfunction
-
-    " --- Scope ---
-
-        function! s:ScopeOnExit(job_id, data, event)
-            " relead the new cscope db
-            execute ":cs kill -1" 
-            execute ":cs add cscope.out" 
-
-            echom "cscope updated!"
-        endfunction
-        function! s:CtagsOnExit(job_id, data, event)
-            echom "ctags updated!"
-        endfunction
-        function! s:ScopeUpdate()
-            let l:scope_command = ""
-            let l:ctags_command = ""
-            if &filetype ==# 'python'
-                let l:ctags_command = "-Rb"
-                let l:scope_command = "-Rb"
-            elseif &filetype ==# 'c' || &filetype == 'cpp' || &filetype ==# 'make'
-                let l:ctags_command = "-Rb"
-                let l:scope_command = "-Rb"
-            endif
-
-            echo "Tags are updatings..."
-            call jobstart(["ctags", l:ctags_command], {'on_exit': function('s:CtagsOnExit')})
-            call jobstart(["cscope", l:scope_command], {'on_exit': function('s:ScopeOnExit')})
-        endfunction
-
 
     " --- Marker ---
 
