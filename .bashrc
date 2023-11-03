@@ -75,9 +75,10 @@ run_on_prompt_command()
 {
     log_bash_persistent_history
 }
+
 export PROMPT_COMMAND="run_on_prompt_command"
-alias ph='tac ~/.persistent_history|fzf'
-# bind <ctrl>-p to run the '`ph`' command
-bind '"\C-p":"`ph`\n"'
+alias ph='tac ~/.persistent_history ~/.common_commands | fzf'
+# bind <ctrl>-p to run the 'ph' command
+bind '"\C-p":"ph\n"'
 
 # -------------------------------------------------------------------------------

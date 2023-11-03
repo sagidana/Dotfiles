@@ -1,0 +1,23 @@
+echo "test" | sed 's/test/help/g'
+awk '{print $3 "\t" $4}' file.txt
+awk '/a/ {print $0}' file.txt
+cat file | awk -F. '{print $1}'
+cat /etc/passwd | cut -d: -f1
+cut -d: -f1 /etc/passwd
+cut -d ':' -f 1 /etc/passwd
+find . -name tecmint.txt
+find . -type f -name tecmint.txt
+find . -type f -iname tecmint.txt
+find ./ -type f -regex '\.\/a[01].*'
+cat file | grep --line-buffered "pattern"
+seq 100 | xargs -t -I{} mkdir /tmp/{}
+seq 6 | xargs -t -I{} -P1 sleep 1
+seq 6 | xargs -t -I{} -P6 sleep 1
+tar -xvf file.tar.gz # extract a tar file
+tar -cvf filename.tar /path/to/directory # create tar file for a directory
+sudo useradd -m USERNAME # create user
+sudo usermod -a -G GROUPNAME USERNAME # add user to group
+ssh -L <local port>:<remote ip address>:<remote port> <public ssh server ip address>  # local port forward
+ssh -L 8888:192.168.1.3:8080 44.11.22.33
+ssh -R <remote port>:<local ip address>:<local port> <remote ip address> # remote port forward
+ls -alt # ls sorted
