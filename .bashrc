@@ -64,21 +64,22 @@ log_bash_persistent_history()
   local command_part="${BASH_REMATCH[2]}"
   if [ "$command_part" != "$PERSISTENT_HISTORY_LAST" ]
   then
-    # echo $date_part "|" "$command_part" >> ~/.persistent_history
     echo "$command_part" >> ~/.persistent_history
     export PERSISTENT_HISTORY_LAST="$command_part"
   fi
 }
-
 # Stuff to do on PROMPT_COMMAND
 run_on_prompt_command()
 {
     log_bash_persistent_history
 }
-
 export PROMPT_COMMAND="run_on_prompt_command"
-alias ph='tac ~/.persistent_history ~/.common_commands | fzf'
-# bind <ctrl>-p to run the 'ph' command
-bind '"\C-p":"ph\n"'
+
+ph()
+{
+    READLINE_LINE=$(tac ~/.persistent_history ~/.common_commands | fzf)
+    READLINE_POINT=${#READLINE_LINE}
+}
+bind -x '"\C-p":ph'
 
 # -------------------------------------------------------------------------------
