@@ -22,3 +22,4 @@ ssh -L 8888:192.168.1.3:8080 44.11.22.33
 ssh -R <remote port>:<local ip address>:<local port> <remote ip address> # remote port forward
 ls -alt # ls sorted
 objdump -d lib.so | sed -n '/<sqlite3Error>:\s*$/, /^\s*$/p'
+ssh-copy-id -i ~/.ssh/id_rsa.pub user@host
