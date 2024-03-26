@@ -23,3 +23,4 @@ ssh -R <remote port>:<local ip address>:<local port> <remote ip address> # remot
 ls -alt # ls sorted
 objdump -d lib.so | sed -n '/<sqlite3Error>:\s*$/, /^\s*$/p'
 ssh-copy-id -i ~/.ssh/id_rsa.pub user@host
+find . | grep -E "(/__pycache__$|\.pyc$|\.pyo$)" | xargs rm -rf # remove all pycache garbage
