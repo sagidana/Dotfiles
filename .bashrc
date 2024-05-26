@@ -77,7 +77,7 @@ export PROMPT_COMMAND="run_on_prompt_command"
 
 ph()
 {
-    READLINE_LINE=$(tac ~/.persistent_history ~/.common_commands | fzf)
+    READLINE_LINE=$(tac ~/.persistent_history ~/.common_commands | fzf --tiebreak=index)
     READLINE_POINT=${#READLINE_LINE}
 }
 bind -x '"\C-p":ph'
