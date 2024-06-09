@@ -1,6 +1,8 @@
 echo "test" | sed 's/test/help/g'
 awk '{print $3 "\t" $4}' file.txt
 awk '/a/ {print $0}' file.txt
+tail -f `ls -t | head -1` # tail most recent file
+cat `ls -t | head -1` # cat most recent file
 cat file | awk -F. '{print $1}'
 cat /etc/passwd | cut -d: -f1
 cut -d: -f1 /etc/passwd
