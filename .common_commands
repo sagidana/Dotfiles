@@ -38,3 +38,8 @@ apktool d -r <name>.apk o out_dir # exclude resources
 
 diff <(find start_dir/ -printf '%P\n' | sort) <(find end_dir/ -printf '%P\n' | sort) | grep '^[<>]' > fs_files.dump
 diff -r start_dir/ end_dir/ > fs_diff.dump
+
+git log -G"search_term" # search commits with changes containing search_term
+git log -G"search_term" --patch # search commits with changes containing search_term and show the changes
+git log --grep "search_term" # search commits messages containing search_term
+
