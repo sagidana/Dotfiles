@@ -28,3 +28,13 @@ pyenv versions
 pyenv install 3.11 # install python version<python_version>
 pyenv activate <name>
 pyenv deactivate
+
+tmux new-session -t work -s mirror
+tmux list-sessions
+tmux kill-session -t mirror
+
+frida -D `pick` -f package -l frida.js
+apktool d -r <name>.apk o out_dir # exclude resources
+
+diff <(find start_dir/ -printf '%P\n' | sort) <(find end_dir/ -printf '%P\n' | sort) | grep '^[<>]' > fs_files.dump
+diff -r start_dir/ end_dir/ > fs_diff.dump
