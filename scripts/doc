@@ -1,1 +1,24 @@
 #!/usr/bin/python
+
+from datetime import datetime
+from os import path
+import sys
+
+
+def main():
+	text = sys.stdin.read()
+
+	doc_path = path.expanduser('~/doc.md')
+	time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+	to_write = f"[{time}] [CONSOLE]\n"
+	to_write += f"```console\n"
+	to_write += f"{text}\n"
+	to_write += "```\n"
+
+	with open(doc_path, 'a+') as doc_file:
+		doc_file.write(to_write)
+
+
+if __name__=='__main__':
+	main()
