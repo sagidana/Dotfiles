@@ -75,12 +75,18 @@ run_on_prompt_command()
 }
 export PROMPT_COMMAND="run_on_prompt_command"
 
-ph()
+persistent_history()
 {
-    READLINE_LINE=$(tac ~/.persistent_history ~/.common_commands | fzf --tiebreak=index)
+    READLINE_LINE=$(tac ~/.persistent_history | fzf --tiebreak=index)
     READLINE_POINT=${#READLINE_LINE}
 }
-bind -x '"\C-p":ph'
+bind -x '"\C-p":persistent_history'
+common_commands()
+{
+    READLINE_LINE=$(cat ~/.common_commands | fzf --tiebreak=index --delimiter="#" --with-nth=1 --preview="echo -e {2}" --preview-window=wrap)
+    READLINE_POINT=${#READLINE_LINE}
+}
+bind -x '"\C-o":common_commands'
 
 # -------------------------------------------------------------------------------
 
