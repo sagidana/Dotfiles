@@ -28,6 +28,7 @@
     set splitbelow              " the default split direction will be at the bottom
     set mouse=a                 " enable mouse support (selection, resize).
     set tags=tags               " enable ctags
+    set synmaxcol=0             " disable limit on syntax highlight col max.
     set clipboard+=unnamedplus
 
     " -- Status Line --
