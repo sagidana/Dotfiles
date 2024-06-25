@@ -32,6 +32,7 @@
     set clipboard+=unnamedplus  " copy to system clipboard automagically
     set termguicolors           " enable 24bit color in the tui
 
+    " lua require 'sagi' " add lua config if want
 
     " -- Status Line --
     set statusline=
