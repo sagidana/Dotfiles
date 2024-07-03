@@ -32,8 +32,6 @@
     set clipboard+=unnamedplus  " copy to system clipboard automagically
     set termguicolors           " enable 24bit color in the tui
 
-    " lua require 'sagi' " add lua config if want
-
     " -- Status Line --
     set statusline=
     set statusline+=\ %n        " buffer number
@@ -162,7 +160,8 @@
     " somehow the only shceme that actualy worked for me in all
     " use cases is the default one... WTF?
     " colorscheme default
-    colorscheme monokai
+    " colorscheme monokai
+    colorscheme habamax
 
 
 """ ---- Bindings ----
@@ -1853,3 +1852,5 @@
                 endwhile
                 execute "silent! normal! $"
             endfunction
+
+lua require 'sagi' " add lua config if want
