@@ -30,7 +30,14 @@
     set tags=tags               " enable ctags
     set synmaxcol=0             " disable limit on syntax highlight col max.
     set clipboard+=unnamedplus  " copy to system clipboard automagically
-    set termguicolors           " enable 24bit color in the tui
+    
+    " https://askubuntu.com/questions/125526/vim-in-tmux-display-wrong-colors
+    " fixes colors between .bashrc -> .tmux.conf -> .vimrc
+    if exists('+termguicolors') && ($TERM == "tmux-256color")
+        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+        set termguicolors
+    endif
 
     " -- Status Line --
     set statusline=
