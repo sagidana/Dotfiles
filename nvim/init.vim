@@ -284,6 +284,11 @@
             nnoremap <silent> gs :<C-u>set operatorfunc=<SID>GoSurroundOperator<CR>g@
             vnoremap <silent> gs :<C-u>call <SID>GoSurroundOperator(visualmode())<CR>
 
+        " -- Doc Operator
+
+            nnoremap <silent> <leader>d :<C-u>set operatorfunc=<SID>DocOperator<CR>g@
+            vnoremap <silent> <leader>d :<C-u>call <SID>DocOperator(visualmode())<CR>
+
         " -- Comment Operator
 
             nnoremap <silent> gc :<C-u>set operatorfunc=<SID>CommentOperator<CR>g@
@@ -1505,6 +1510,74 @@
 
                 " Restore cursor position
                 call setpos('.', l:saved_cursor_position)
+            endfunction
+
+        " -- Doc Operator Implementation
+
+            function! s:GetSelected(start_range, end_range)
+                " Why is this not a built-in Vim script function?!
+                let [line_start, column_start] = getpos(a:start_range)[1:2]
+                let [line_end, column_end] = getpos(a:end_range)[1:2]
+                let lines = getline(line_start, line_end)
+                if len(lines) == 0
+                    return ''
+                endif
+                let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+                let lines[0] = lines[0][column_start - 1:]
+                return join(lines, "\n")
+            endfunction
+
+            function! s:MainDocOperator(start_range, end_range)
+                let l:selected = <SID>GetSelected(a:start_range, a:end_range)
+                let l:to_doc = "[".strftime('%Y-%m-%d %H:%M:%S')."] [CODE] ".expand('%:p').":".line('.')."\n"
+                let l:to_doc = l:to_doc."```".&filetype."\n"
+                let l:to_doc = l:to_doc.l:selected."\n"
+                let l:to_doc = l:to_doc."```"
+
+                " --------------------------------------------------------------------------------
+                " append to doc file
+                " --------------------------------------------------------------------------------
+                new
+                setlocal buftype=nofile bufhidden=hide noswapfile nobuflisted
+                put=l:to_doc
+                execute 'w >> ~/doc.md'
+                q
+                " --------------------------------------------------------------------------------
+            endfunction
+
+            function! s:DocOperator(type)
+                " Save unnamed register's content
+                let l:saved_unnamed_register = @@
+
+                if a:type ==# 'v'
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainDocOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'V'
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainDocOperator(l:start_range, l:end_range)
+                elseif a:type ==# "\<c-v>"                          " Visuall Block mode
+                    let l:start_range = "'<"
+                    let l:end_range = "'>"
+
+                    call <SID>MainDocOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'line'
+                    let l:start_range = "'["
+                    let l:end_range = "']"
+
+                    call <SID>MainDocOperator(l:start_range, l:end_range)
+                elseif a:type ==# 'char'
+                    let l:start_range = "'["
+                    let l:end_range = "']"
+
+                    call <SID>MainDocOperator(l:start_range, l:end_range)
+                endif
+
+                " Restore unnamed register's content
+                let @@ = l:saved_unnamed_register
             endfunction
 
         " -- Comment Operator Implementation
