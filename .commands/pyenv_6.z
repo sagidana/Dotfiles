@@ -1,0 +1,3 @@
+pyenv exec <program>
+==
+whatever program you choose will be executed on the python you set to global/local/shell

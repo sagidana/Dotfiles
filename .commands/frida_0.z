@@ -1,0 +1,2 @@
+frida -D `pick` -f package -l frida.js
+==

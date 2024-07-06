@@ -1,0 +1,2 @@
+awk '/a/ {print $0}' file.txt
+==

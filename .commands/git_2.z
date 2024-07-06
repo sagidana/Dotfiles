@@ -1,0 +1,3 @@
+git log --grep "search_term"
+==
+search commits messages containing search_term

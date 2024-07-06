@@ -1,0 +1,2 @@
+objdump -d lib.so | sed -n '/<sqlite3Error>:\s*$/, /^\s*$/p'
+==

@@ -1,0 +1,3 @@
+pyenv shell 3.11
+==
+$PYENV_VERSION

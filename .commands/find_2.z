@@ -1,0 +1,2 @@
+find ./ -type f -regex '\.\/a[01].*'
+==

@@ -1,0 +1,2 @@
+seq 100 | xargs -t -I{} mkdir /tmp/{}
+==

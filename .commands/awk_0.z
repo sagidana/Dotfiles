@@ -1,0 +1,2 @@
+awk '{print $3 "\t" $4}' file.txt
+==

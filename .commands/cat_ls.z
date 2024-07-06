@@ -1,0 +1,3 @@
+cat `ls -t | head -1`
+==
+cat most recent file

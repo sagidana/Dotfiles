@@ -81,13 +81,46 @@ persistent_history()
     READLINE_POINT=${#READLINE_LINE}
 }
 bind -x '"\C-p":persistent_history'
-common_commands()
+com_doc_rg_head()
 {
-    READLINE_LINE=$(cat ~/.common_commands | fzf --tiebreak=index --delimiter="#" --with-nth=1 --preview="echo -e {2}" --preview-window=wrap)
+    RESULTS=$(rg -l --no-heading "$1" -- ~/.commands)
+    if [ $? -eq 0 ]; then
+        #Set the field separator to new line
+        IFS=$'\n'
+        for item in $RESULTS
+        do
+            head -n1 $item
+        done
+    fi
+}
+export -f com_doc_rg_head # this is important so that fzf will have that function
+
+com_doc_fzf_preview()
+{
+    ARG=$1
+    RESULTS=$(rg -l --no-heading -F "${ARG}" -- ~/.commands)
+    if [ $? -eq 0 ]; then
+        #Set the field separator to new line
+        IFS=$'\n'
+        for item in $RESULTS
+        do
+            cat $item | sed -z -n -e 's/^.*==\n//p'
+        done
+    fi
+}
+export -f com_doc_fzf_preview # this is important so that fzf will have that function
+
+com_doc()
+{
+    INITIAL_QUERY=""
+    READLINE_LINE=$(FZF_DEFAULT_COMMAND="com_doc_rg_head '$INITIAL_QUERY'" \
+            fzf --bind "change:reload:com_doc_rg_head {q} || true" \
+                --ansi --phony --query "$INITIAL_QUERY" \
+                --preview="com_doc_fzf_preview {}" \
+                --preview-window=wrap)
     READLINE_POINT=${#READLINE_LINE}
 }
-bind -x '"\C-o":common_commands'
-
+bind -x '"\C-o":com_doc'
 # -------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------

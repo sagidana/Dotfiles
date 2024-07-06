@@ -1,0 +1,2 @@
+echo "test" | sed 's/test/help/g'
+==
