@@ -89,7 +89,7 @@ com_doc_rg_head()
         IFS=$'\n'
         for item in $RESULTS
         do
-            head -n1 $item
+            cat $item | sed -z -n -e 's/==.*$//p'
         done
     fi
 }
