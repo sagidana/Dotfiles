@@ -1,3 +1,7 @@
+[user]
+    email = sagidana1@gmail.com
+    name = Sagi Dana
+
 [difftool]
     prompt = true
 [diff]
