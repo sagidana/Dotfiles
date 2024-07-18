@@ -1,4 +1,4 @@
-""" ---- Plug configuration ----  
+""" ---- Plug configuration ----
 
     " call plug#begin(stdpath('data') . '/plugged')
 
@@ -7,7 +7,7 @@
     " call plug#end()
 
 
-""" ---- General configuration ---- 
+""" ---- General configuration ----
 
     set nocompatible            " Disable compatibility to old-time vi
     set showmatch               " Show matching brackets.
@@ -30,7 +30,7 @@
     set tags=tags               " enable ctags
     set synmaxcol=0             " disable limit on syntax highlight col max.
     set clipboard+=unnamedplus  " copy to system clipboard automagically
-    
+
     " https://askubuntu.com/questions/125526/vim-in-tmux-display-wrong-colors
     " fixes colors between .bashrc -> .tmux.conf -> .vimrc
     if exists('+termguicolors') && ($TERM == "tmux-256color")
@@ -56,8 +56,8 @@
     " Fix syntax highlighting bugs for markdown:
     " create the file: "~/.config/nvim/after/syntax/markdown.vim"
     " put in the file: "syntax sync fromstart"
-    " I can't put this command in the init.vim because it happens too soon. we need this 
-    " command to run after the syntax rules for markdown are loaded, otherwise the sync will 
+    " I can't put this command in the init.vim because it happens too soon. we need this
+    " command to run after the syntax rules for markdown are loaded, otherwise the sync will
     " be cleared by the rules loaded. The way to do that is using the after directory of vim
     " and we do that only for markdown (markdown.vim).
 
@@ -68,7 +68,7 @@
     set list
 
     if has('cscope')
-        set cscopetag 
+        set cscopetag
         set nocscopeverbose
         set csto=1                  " check ctags before cscope
 
@@ -215,7 +215,7 @@
 
         " -- Update commands
 
-            " [Update JumpList] 
+            " [Update JumpList]
             nnoremap <leader>uj :call <SID>JumpListLoad()<CR>
 
         " -- Evlauate commands
@@ -267,12 +267,17 @@
 
             nnoremap <leader>f :call <SID>Jumper()<CR>
 
+        " -- Knowit commands --
+
+            nnoremap <leader>kl :call <SID>KnowitLinkLaunch()<CR>
+            nnoremap <leader>kb :call <SID>KnowitBrowseLaunch()<CR>
+
         " -- Search commands --
 
-            " [Search File] 
+            " [Search File]
             nnoremap <leader>sf :call <SID>FZFLaunch()<CR>
 
-            " [Search Content in files] 
+            " [Search Content in files]
             nnoremap <leader>sc :call <SID>RipGrepLaunch(0)<CR>
             vnoremap <leader>sc :call <SID>RipGrepLaunch(1)<CR>
 
@@ -440,6 +445,24 @@
                 call TerminalLaunch("fzf", "silent! normal! :call FZFOnExit()\r", 0, 0, 0)
             endfunction
 
+        " --- Knowit ---
+
+            function! KnowitLinkOnExit()
+                execute "silent! normal! "."i".g:terminal_content[0]
+            endfunction
+
+            function! s:KnowitLinkLaunch()
+                call TerminalLaunch("python /home/s/github/knowit/knowit.py -a link", "silent! normal! :call KnowitLinkOnExit()\r", 0, 0, 0)
+            endfunction
+
+            function! KnowitBrowseOnExit()
+                execute "silent! normal! ".":e ".g:terminal_content[0]."\r"
+            endfunction
+
+            function! s:KnowitBrowseLaunch()
+                call TerminalLaunch("python /home/s/github/knowit/knowit.py -a link", "silent! normal! :call KnowitBrowseOnExit()\r", 2, 0, 0)
+            endfunction
+
         " --- Rig Grep ---
 
             function! RipGrepOnExit()
@@ -477,7 +500,7 @@
 
             function! s:RipGrepLaunch(input_type)
                 if a:input_type == 1 " get input from visual selected
-                    " getting the current visually seleceted text 
+                    " getting the current visually seleceted text
                     " (assume to be only one line)
                     let l:to_search = "\"".getline("'<")[getpos("'<")[2]-1:getpos("'>")[2]-1]."\""
                 else
@@ -506,7 +529,7 @@
                 let l:file_path = expand("%")
 
                 " the git blame command to execute
-                let l:git_command = "git log -L".l:line_start.",".l:line_stop.":".l:file_path 
+                let l:git_command = "git log -L".l:line_start.",".l:line_stop.":".l:file_path
 
                 " this command let me run any command from the linux git repo
                 " directory.
@@ -647,7 +670,7 @@
             let choice = confirm("Enter the number of the vimable:", choices)
 
             " Initialize the vimable to the local buffer
-            let b:vimable =   {  
+            let b:vimable =   {
                             \   "name" :mapping[choice],
                             \   "url" : vimables[mapping[choice]]
                             \ }
@@ -661,8 +684,8 @@
         function! s:VimableExecute(code)
             if !exists('b:vimable')
                 echo "Vimable not initialized!"
-                return 
-            endif 
+                return
+            endif
 
             let name = b:vimable['name']
             let url = b:vimable['url']
@@ -695,7 +718,7 @@
 
         function! VimableCompletion(findstart, base)
             if a:findstart
-                " locate the start of the word. 
+                " locate the start of the word.
                 let line = getline('.')
                 let start = col('.') - 1
                 while start > 0 && line[start - 1] =~ '\a'
@@ -732,7 +755,7 @@
                     endwhile
 
                     let l:to_execute = l:to_execute . getline(l:end_line)[:l:end_col-1] . "\n"
-                else 
+                else
                     let l:to_execute = getline(line(a:start_range))
                     let l:to_execute = l:to_execute[col(a:start_range) - 1:col(a:end_range) - 1]
                 endif
@@ -775,7 +798,7 @@
             endif
 
             " Restore unnamed register's content
-            let @@ = l:saved_unnamed_register 
+            let @@ = l:saved_unnamed_register
 
             " Restore cursor position
             call setpos('.', l:saved_cursor_position)
@@ -924,7 +947,7 @@
                             " let l:found_in_duplicates = 1
                             " break
                         " endif
-                    " endfor 
+                    " endfor
 
                     " " add only the first to the matches.
                     " if l:found_in_duplicates == 0
@@ -1000,7 +1023,7 @@
                 if foldclosed(l:current_line) != -1
                     let l:current_line += 1
                     continue
-                endif 
+                endif
 
                 call add(l:visible_lines, [l:current_line, getline(l:current_line)])
                 let l:current_line += 1
@@ -1202,7 +1225,7 @@
                             " let l:found_in_duplicates = 1
                             " break
                         " endif
-                    " endfor 
+                    " endfor
 
                     " " add only the first to the matches.
                     " if l:found_in_duplicates == 0
@@ -1278,7 +1301,7 @@
                 if foldclosed(l:current_line) != -1
                     let l:current_line += 1
                     continue
-                endif 
+                endif
 
                 call add(l:visible_lines, [l:current_line, getline(l:current_line)])
                 let l:current_line += 1
@@ -1417,13 +1440,13 @@
 
                 " Check left side
                 if search(l:left_before_character, 'bcnWz') ==# 0
-                    return 
-                endif 
+                    return
+                endif
 
                 " Check right side
                 if search(l:left_before_character, 'nWz') ==# 0
-                    return 
-                endif 
+                    return
+                endif
 
 
                 " Get the character to change with
@@ -1506,7 +1529,7 @@
                 endif
 
                 " Restore unnamed register's content
-                let @@ = l:saved_unnamed_register 
+                let @@ = l:saved_unnamed_register
 
                 " Restore cursor position
                 call setpos('.', l:saved_cursor_position)
@@ -1626,8 +1649,8 @@
                 let l:comment_pattern_2 = l:comment."\\w\\+"
 
                 let l:delete_legnth = strlen(l:comment) + 1
-                let l:found_index_pattern_1 = match(l:line, l:comment_pattern_1) 
-                let l:found_index_pattern_2 = match(l:line, l:comment_pattern_2) 
+                let l:found_index_pattern_1 = match(l:line, l:comment_pattern_1)
+                let l:found_index_pattern_2 = match(l:line, l:comment_pattern_2)
 
                 if l:found_index_pattern_1 < 0
                     let l:found_index_pattern_1 = 999
@@ -1747,7 +1770,7 @@
                 endif
 
                 " Restore unnamed register's content
-                let @@ = l:saved_unnamed_register 
+                let @@ = l:saved_unnamed_register
             endfunction
 
             function! s:SetCommentOperator()
@@ -1851,7 +1874,7 @@
                 endif
 
                 " Restore unnamed register's content
-                let @@ = l:saved_unnamed_register 
+                let @@ = l:saved_unnamed_register
             endfunction
 
     " " --- Language Server Protocol ---
@@ -1881,7 +1904,7 @@
 
                 " Go up to start of indentation.
                 while 1
-                    if indent(line(".")) < l:indent_level && match(getline(line(".")), "^\\s*$") < 0 
+                    if indent(line(".")) < l:indent_level && match(getline(line(".")), "^\\s*$") < 0
                         break
                     endif
 
