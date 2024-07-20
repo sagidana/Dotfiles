@@ -1,0 +1,27 @@
+#!/bin/bash
+git log --color=always \
+        --format="%C(cyan)%h %C(blue)%ar%C(auto)%d %C(yellow)%s+b %C(black)%ae" |
+    fzf -i -e +s \
+    --tiebreak=index \
+    --ansi \
+    --preview-window 'up,60%' \
+    --preview=" echo {} |
+                grep -o '[a-f0-9]\{7\}' |
+                head -1 |
+                xargs -I % sh -c 'git show --name-only --color=always %'" \
+    --bind "ctrl-n:change-preview(echo {} |
+                                  grep -o '[a-f0-9]\{7\}' |
+                                  head -1 |
+                                  xargs -I % sh -c 'git show --color=always %')" \
+    --bind "ctrl-p:change-preview(echo {} |
+                                  grep -o '[a-f0-9]\{7\}' |
+                                  head -1 |
+                                  xargs -I % sh -c 'git show --name-only --color=always %')" \
+    --bind 'ctrl-k:preview-up' \
+    --bind 'ctrl-j:preview-down' \
+    --bind 'ctrl-u:preview-half-page-up' \
+    --bind 'ctrl-d:preview-half-page-down'\
+    --bind "enter:execute(echo {} |
+                         grep -o '[a-f0-9]\{7\}' |
+                         head -1 |
+                         xargs -I % sh -c '/home/s/scripts/gdiff %')"

@@ -1,0 +1,17 @@
+#!/bin/bash
+git show --pretty="" --name-only $1 |
+    fzf -i -e +s \
+    --ansi \
+    --tiebreak=index \
+    --color \
+    --preview-window 'up,80%' \
+    --preview="diff \
+                --color=always \
+                --width=$FZF_COLUMNS \
+                --suppress-common-lines \
+                --side-by-side  \
+                <(git show --pretty='' $1~1:{}) <(git show --pretty='' $1:{})" \
+    --bind 'ctrl-k:preview-up' \
+    --bind 'ctrl-j:preview-down' \
+    --bind 'ctrl-u:preview-half-page-up' \
+    --bind 'ctrl-d:preview-half-page-down'
