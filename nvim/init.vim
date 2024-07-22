@@ -30,7 +30,7 @@
     set tags=tags               " enable ctags
     set synmaxcol=0             " disable limit on syntax highlight col max.
     set clipboard+=unnamedplus  " copy to system clipboard automagically
-    
+
     " https://askubuntu.com/questions/125526/vim-in-tmux-display-wrong-colors
     " fixes colors between .bashrc -> .tmux.conf -> .vimrc
     if exists('+termguicolors') && ($TERM == "tmux-256color")
@@ -276,6 +276,10 @@
             nnoremap <leader>sc :call <SID>RipGrepLaunch(0)<CR>
             vnoremap <leader>sc :call <SID>RipGrepLaunch(1)<CR>
 
+            " [Search Live Content in files] 
+            nnoremap <leader>sl :call <SID>LiveRipGrepLaunch(0)<CR>
+            vnoremap <leader>sl :call <SID>LiveRipGrepLaunch(1)<CR>
+
     """ --- Custom Operators Bindings ---
 
         " -- Surround Operator
@@ -490,6 +494,51 @@
                     let l:args = "--max-columns 200 -g '!/resources' -g '!/tags' --vimgrep "
                     call TerminalLaunch("rg ".l:args.l:to_search, "silent! normal! :call RipGrepOnExit()\r", 2, 1, 0)
                 endif
+            endfunction
+
+        " --- Live Rig Grep ---
+
+            function! LiveRipGrepOnExit()
+                let l:ripgrep_line = g:terminal_content[0]
+                if match(l:ripgrep_line, "^.*:\\d\\+:\\d\\+:.*$") < 0
+                    return
+                endif
+                let l:file_path = split(l:ripgrep_line, ':')[0]
+                let l:file_line = split(l:ripgrep_line, ':')[1]
+                let l:file_column = split(l:ripgrep_line, ':')[2]
+
+                execute "silent! normal! :e ".l:file_path."\r"
+                execute "silent! normal! :".l:file_line."\r"
+            endfunction
+
+            function! s:LiveRipGrepLaunch(input_type)
+                if a:input_type == 1 " get input from visual selected
+                    " getting the current visually seleceted text
+                    " (assume to be only one line)
+                    let l:to_search = "\"".getline("'<")[getpos("'<")[2]-1:getpos("'>")[2]-1]."\""
+                else
+                    let l:to_search = "\"\""
+                endif
+
+                let l:rg_command_prefix = "rg --max-columns 200 -g \'!/resources\' -g \'!/tags\' --vimgrep "
+                let l:rg_command_suffix = "."
+                let l:command = "FZF_DEFAULT_OPTS=\""
+                let l:command = l:command."--ansi "
+                let l:command = l:command."--delimiter : "
+                let l:command = l:command."--disabled "
+                let l:command = l:command."--query '".l:to_search."' "
+                let l:command = l:command."--bind 'change:reload:".l:rg_command_prefix." \'{q}\' ".l:rg_command_suffix." || true' "
+                let l:command = l:command."--bind 'ctrl-k:preview-up' "
+                let l:command = l:command."--bind 'ctrl-j:preview-down' "
+                let l:command = l:command."--bind 'ctrl-u:preview-half-page-up' "
+                let l:command = l:command."--bind 'ctrl-d:preview-half-page-down' "
+                let l:command = l:command."--preview-window 'up,70%,+{2}-/2' "
+                let l:command = l:command."--preview 'bat --style=auto --color=always -H {2} {1}'\" "
+                let l:command = l:command."FZF_DEFAULT_COMMAND=\""
+                let l:command = l:command.l:rg_command_prefix." '".l:to_search."' ".l:rg_command_suffix."\""
+                let l:command = l:command." fzf"
+
+                call TerminalLaunch(l:command, "normal! :call LiveRipGrepOnExit()\r", 2, 1, 0)
             endfunction
 
         " --- Blame ---
