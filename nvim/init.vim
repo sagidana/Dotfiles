@@ -11,6 +11,7 @@
 
     set nocompatible            " Disable compatibility to old-time vi
     set showmatch               " Show matching brackets.
+    set noswapfile              " disable swap files permanently
     set hlsearch                " highlight search results
     set incsearch               " highlight saerch results while searching.
     set inccommand=nosplit      " highlight search results while sustitude.
