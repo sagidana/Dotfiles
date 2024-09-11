@@ -11,6 +11,7 @@
 
     set nocompatible            " Disable compatibility to old-time vi
     set showmatch               " Show matching brackets.
+    set noswapfile              " disable swap files permanently
     set hlsearch                " highlight search results
     set incsearch               " highlight saerch results while searching.
     set inccommand=nosplit      " highlight search results while sustitude.
@@ -30,6 +31,8 @@
     set tags=tags               " enable ctags
     set synmaxcol=0             " disable limit on syntax highlight col max.
     set clipboard+=unnamedplus  " copy to system clipboard automagically
+    set nowrap                  " this is a nice default so the files would
+                                "look sane, I can always type ':set wrap<cr>' manually when needed
 
     " https://askubuntu.com/questions/125526/vim-in-tmux-display-wrong-colors
     " fixes colors between .bashrc -> .tmux.conf -> .vimrc
