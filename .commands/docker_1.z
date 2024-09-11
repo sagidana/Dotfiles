@@ -1,0 +1,3 @@
+docker ps --all
+==
+to list running/stopped containers

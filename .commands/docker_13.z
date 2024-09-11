@@ -1,0 +1,3 @@
+docker run -d <image_name>
+==
+run a container in the background

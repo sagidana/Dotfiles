@@ -1,0 +1,3 @@
+docker run -p <host_port>:<container_port> <image_name>
+==
+run a container with and publish a container's port(s) to the host

@@ -1,0 +1,3 @@
+docker build -t <image_name>
+==
+build and image from Dockerfile

@@ -1,0 +1,3 @@
+docker start <container_name>
+==
+starting a container
