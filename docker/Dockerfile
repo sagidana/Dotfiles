@@ -56,7 +56,6 @@ RUN ln -s /usr/bin/batcat ~/.local/bin/bat
 ENV PATH="/root/.local/bin:${PATH}"
 
 # setup bashrc
-COPY ./home/.commands /root/.commands
 COPY ./home/.bashrc /root/bashrc
 RUN cat ~/bashrc >> ~/.bashrc && rm ~/bashrc
 
