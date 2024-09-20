@@ -1,0 +1,2 @@
+cat file | grep --line-buffered "pattern"
+==

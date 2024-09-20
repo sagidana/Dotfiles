@@ -1,0 +1,2 @@
+diff <(find start_dir/ -printf '%P\n' | sort) <(find end_dir/ -printf '%P\n' | sort) | grep '^[<>]' > fs_files.dump
+==

@@ -1,0 +1,3 @@
+docker exec -it <container_name> sh
+==
+open a shell inside a running container

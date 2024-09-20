@@ -1,0 +1,3 @@
+git log -G"search_term"
+==
+search commits with changes containing search_term

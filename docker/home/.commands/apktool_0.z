@@ -1,0 +1,3 @@
+apktool d -r <name>.apk o out_dir
+==
+exclude resources

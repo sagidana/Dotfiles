@@ -1,0 +1,3 @@
+pyenv local 3.11
+==
+~/.python-version

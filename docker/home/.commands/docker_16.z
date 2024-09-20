@@ -1,0 +1,3 @@
+docker search <image_name>
+==
+search hub for an image

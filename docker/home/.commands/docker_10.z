@@ -1,0 +1,3 @@
+docker stop <container_name>
+==
+stopping a container

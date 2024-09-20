@@ -1,0 +1,3 @@
+docker image prune
+==
+delete all unused images

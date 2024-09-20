@@ -1,0 +1,2 @@
+diff -r start_dir/ end_dir/ > fs_diff.dump
+==

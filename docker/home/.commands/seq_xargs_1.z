@@ -1,0 +1,2 @@
+seq 6 | xargs -t -I{} -P1 sleep 1
+==

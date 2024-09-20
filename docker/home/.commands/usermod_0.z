@@ -1,0 +1,3 @@
+sudo usermod -a -G GROUPNAME USERNAME
+==
+add user to group

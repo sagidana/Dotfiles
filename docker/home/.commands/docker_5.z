@@ -1,0 +1,3 @@
+docker rmi <image_name>
+==
+delete an image

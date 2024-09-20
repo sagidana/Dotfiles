@@ -1,0 +1,3 @@
+tar -cvf filename.tar /path/to/directory
+==
+create tar file for a directory
