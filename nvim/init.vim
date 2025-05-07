@@ -705,6 +705,8 @@
         " define the variables on windows creation
         autocmd WinNew * let w:recall_cursor_locations = []
         autocmd WinNew * let w:recall_index = 0
+        let w:recall_cursor_locations = []
+        let w:recall_index = 0
 
         function! s:RecallPush()
             let w:recall_cursor_locations = w:recall_cursor_locations[:w:recall_index]
