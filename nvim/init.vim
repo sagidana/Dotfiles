@@ -192,7 +192,7 @@
     " *** in visual mode only ***
     " We re-yank the text we just pasted and go to the end of the pasted text.
     " Reason: we want to be able to redo the replace operation we just did.
-    xnoremap <expr> p 'pgv"'.v:register.'y`>'
+    xnoremap <expr> p 'pgvy`>'
 
     " Search for visually selected text
     vnoremap / y/\V<C-R>=escape(@",'/\')<CR><CR>
