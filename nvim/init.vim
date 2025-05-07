@@ -185,6 +185,15 @@
     " Bind <C-i> to <M-o>
     nnoremap <M-o> <C-i>
 
+    " My own history of the cursor implementation
+    nnoremap <C-n> :call <SID>RecallNext()<CR>
+    nnoremap <C-p> :call <SID>RecallPrev()<CR>
+
+    nnoremap <silent> <C-u> <C-u>:call <SID>RecallPush()<CR>
+    nnoremap <silent> <C-d> <C-d>:call <SID>RecallPush()<CR>
+    nnoremap <silent> j j:call <SID>RecallPush()<CR>
+    nnoremap <silent> k k:call <SID>RecallPush()<CR>
+
     " Change indentation and keep visualized!
     vnoremap > >gv
     vnoremap < <gv
@@ -690,6 +699,37 @@
 
                 call TerminalLaunch(l:command, "silent! normal! :call ScopeXRefsOnExit()\r", 2, 1, 0)
             endfunction
+
+    " --- Recall ---
+
+        " define the variables on windows creation
+        autocmd WinNew * let w:recall_cursor_locations = []
+        autocmd WinNew * let w:recall_index = 0
+
+        function! s:RecallPush()
+            let w:recall_cursor_locations = w:recall_cursor_locations[:w:recall_index]
+            call add(w:recall_cursor_locations, getpos("."))
+            let w:recall_index = w:recall_index + 1
+        endfunction
+
+        function! s:RecallPrev()
+            if w:recall_index == 0
+                return
+            endif
+
+            let l:pos = get(w:recall_cursor_locations, w:recall_index)
+            call cursor(l:pos[1], l:pos[2])
+            let w:recall_index = w:recall_index - 1
+        endfunction
+
+        function! s:RecallNext()
+            if w:recall_index == len(w:recall_cursor_locations)
+                return
+            endif
+            let w:recall_index = w:recall_index + 1
+            let l:pos = get(w:recall_cursor_locations, w:recall_index)
+            call cursor(l:pos[1], l:pos[2])
+        endfunction
 
     " --- Vimable ---
 
