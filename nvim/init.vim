@@ -704,18 +704,23 @@
 
         " define the variables on windows creation
         autocmd WinNew * let w:recall_cursor_locations = []
-        autocmd WinNew * let w:recall_index = 0
+        autocmd WinNew * let w:recall_index = -1
         let w:recall_cursor_locations = []
-        let w:recall_index = 0
+        let w:recall_index = -1
 
         function! s:RecallPush()
             let w:recall_cursor_locations = w:recall_cursor_locations[:w:recall_index]
             call add(w:recall_cursor_locations, getpos("."))
             let w:recall_index = w:recall_index + 1
+
+            if w:recall_index > 99
+                let w:recall_cursor_locations = w:recall_cursor_locations[-100:]
+                let w:recall_index = 99
+            endif
         endfunction
 
         function! s:RecallPrev()
-            if w:recall_index == 0
+            if w:recall_index == -1
                 return
             endif
 
@@ -725,7 +730,7 @@
         endfunction
 
         function! s:RecallNext()
-            if w:recall_index == len(w:recall_cursor_locations)
+            if w:recall_index == len(w:recall_cursor_locations) - 1
                 return
             endif
             let w:recall_index = w:recall_index + 1
