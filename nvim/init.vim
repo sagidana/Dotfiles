@@ -1,10 +1,10 @@
 """ ---- Plug configuration ----
 
-    " call plug#begin(stdpath('data') . '/plugged')
+    call plug#begin(stdpath('data') . '/plugged')
 
-    " Plug 'neovim/nvim-lspconfig'
+    Plug 'neovim/nvim-lspconfig'
 
-    " call plug#end()
+    call plug#end()
 
 
 """ ---- General configuration ----
