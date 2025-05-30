@@ -2055,4 +2055,4 @@
                 execute "silent! normal! $"
             endfunction
 
-lua require 'sagi' " add lua config if want
+lua require('s')
