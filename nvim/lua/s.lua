@@ -1,5 +1,9 @@
 require('lspconfig').pyright.setup{}
 
+vim.diagnostic.config({
+    virtual_text = false
+})
+
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(ev)
     local opts = { buffer = ev.buf }
