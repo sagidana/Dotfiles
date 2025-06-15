@@ -33,6 +33,7 @@
     set clipboard+=unnamedplus  " copy to system clipboard automagically
     set nowrap                  " this is a nice default so the files would
                                 "look sane, I can always type ':set wrap<cr>' manually when needed
+    set signcolumn=yes          " leave sign column always on to prevent 'jumps'
 
     " https://askubuntu.com/questions/125526/vim-in-tmux-display-wrong-colors
     " fixes colors between .bashrc -> .tmux.conf -> .vimrc
