@@ -222,6 +222,9 @@
 
         let mapleader = "\<space>"  " set leader as space
 
+        " -- AiChat
+            vnoremap <silent> <leader>a :<C-u>call <SID>AiChatLaunch()<CR>
+
         " -- Trailing Whitespace
 
             nnoremap <silent> <leader>t :call <SID>ShowTrailingWhitespace()<CR>
@@ -448,8 +451,36 @@
                 " launching the terminal with the command
                 call termopen(a:cmd, {'on_exit': "TerminalOnExit"})
 
-                " entering insert mode after the terminal is launched.
-                normal i
+                if a:dont_close == 0
+                    " entering insert mode after the terminal is launched.
+                    normal i
+                else
+                    normal G
+                endif
+
+            endfunction
+
+        " --- Aichat ---
+
+            function! s:AiChatLaunch()
+                let l:current_line = line("'<")
+                let l:line_end = line("'>")
+
+                let l:lines = []
+                while l:current_line <= l:line_end
+                    let l:line = getline(l:current_line)
+                    call add(l:lines, l:line)
+                    let l:current_line = l:current_line + 1
+                endwhile
+
+                call writefile(l:lines, "/tmp/.tmp.lines")
+
+                let l:system_prompt = ""
+                let l:prompt = input("prompt> ")
+                let l:command = "aichat -f /tmp/.tmp.lines --prompt "."\"".l:prompt."\""
+
+                " echom l:command
+                call TerminalLaunch(l:command, "", 2, 1, 1)
             endfunction
 
         " --- FZF ---
