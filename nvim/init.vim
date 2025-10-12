@@ -34,6 +34,8 @@
     set nowrap                  " this is a nice default so the files would
                                 "look sane, I can always type ':set wrap<cr>' manually when needed
     set signcolumn=yes          " leave sign column always on to prevent 'jumps'
+    set undofile                     " enable undo file history save
+    set undodir=~/.config/nvim/undo  " put the histroy in a dedicated folder
 
     " https://askubuntu.com/questions/125526/vim-in-tmux-display-wrong-colors
     " fixes colors between .bashrc -> .tmux.conf -> .vimrc
