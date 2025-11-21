@@ -1756,6 +1756,8 @@
                     let l:comment_syntax = "//"
                 elseif &filetype ==# 'rust'
                     let l:comment_syntax = "//"
+                elseif &filetype ==# 'lua'
+                    let l:comment_syntax = "--"
                 endif
 
                 return l:comment_syntax
