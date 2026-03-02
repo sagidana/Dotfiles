@@ -228,7 +228,8 @@
 
             noremap <silent> <leader>a :<C-u>call <SID>CaiLaunch1()<CR>
             vnoremap <silent> <leader>a :<C-u>call <SID>CaiLaunch2()<CR>
-
+            noremap <silent> <leader>A :<C-u>call <SID>CaiLaunch3()<CR>
+            vnoremap <silent> <leader>A :<C-u>call <SID>CaiLaunch4()<CR>
 
         " -- Trailing Whitespace
 
@@ -476,7 +477,7 @@
                     return
                 endif
 
-                let l:command = "python /home/s/github/cai/cai.py "
+                let l:command = "cai "
                 let l:command = l:command."--prompt "."\"".l:prompt."\" "
                 let l:command = l:command."--location "."\"".expand('%:p').":".line('.').":".col('.')."\" "
 
@@ -505,7 +506,7 @@
                     return
                 endif
 
-                let l:command = "python /home/s/github/cai/cai.py -a prompt "
+                let l:command = "cai "
                 let l:command = l:command."--prompt "."\"".l:prompt."\" "
                 let l:command = l:command."--file "."\"/tmp/.tmp.lines\" "
 
@@ -522,7 +523,7 @@
                     return
                 endif
 
-                let l:command = "python /home/s/github/cai/cai.py "
+                let l:command = "cai "
                 let l:command = l:command."--prompt "."\"".l:prompt."\" "
                 let l:command = l:command."--location "."\"".expand('%:p').":".line('.').":".col('.')."\" "
                 let l:command = l:command."--codebase "
@@ -552,7 +553,7 @@
                     return
                 endif
 
-                let l:command = "python /home/s/github/cai/cai.py -a prompt "
+                let l:command = "cai "
                 let l:command = l:command."--prompt "."\"".l:prompt."\" "
                 let l:command = l:command."--file "."\"/tmp/.tmp.lines\" "
                 let l:command = l:command."--codebase "
