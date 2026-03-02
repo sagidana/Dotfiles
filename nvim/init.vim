@@ -468,11 +468,16 @@
         " --- Cai ---
 
             function! s:CaiLaunch1()
+                call inputsave()
                 let l:prompt = input("prompt> ")
+                call inputrestore()
 
-                let l:command = "python /home/s/github/cai/cai.py -a impl "
+                if empty(l:prompt)
+                    return
+                endif
+
+                let l:command = "python /home/s/github/cai/cai.py "
                 let l:command = l:command."--prompt "."\"".l:prompt."\" "
-                let l:command = l:command."--file "."\"".expand('%:p')."\" "
                 let l:command = l:command."--location "."\"".expand('%:p').":".line('.').":".col('.')."\" "
 
                 " echom l:command
@@ -492,12 +497,65 @@
 
                 call writefile(l:lines, "/tmp/.tmp.lines")
 
+                call inputsave()
                 let l:prompt = input("prompt> ")
+                call inputrestore()
+
+                if empty(l:prompt)
+                    return
+                endif
 
                 let l:command = "python /home/s/github/cai/cai.py -a prompt "
                 let l:command = l:command."--prompt "."\"".l:prompt."\" "
                 let l:command = l:command."--file "."\"/tmp/.tmp.lines\" "
-                " let l:command = l:command."--location "."\"".expand('%:p').":".line('.').":".col('.')."\" "
+
+                " echom l:command
+                call TerminalLaunch(l:command, "silent! normal!", 2, 1, 1)
+            endfunction
+
+            function! s:CaiLaunch3()
+                call inputsave()
+                let l:prompt = input("prompt> ")
+                call inputrestore()
+
+                if empty(l:prompt)
+                    return
+                endif
+
+                let l:command = "python /home/s/github/cai/cai.py "
+                let l:command = l:command."--prompt "."\"".l:prompt."\" "
+                let l:command = l:command."--location "."\"".expand('%:p').":".line('.').":".col('.')."\" "
+                let l:command = l:command."--codebase "
+
+                " echom l:command
+                call TerminalLaunch(l:command, "silent! normal!", 2, 1, 1)
+            endfunction
+
+            function! s:CaiLaunch4()
+                let l:current_line = line("'<")
+                let l:line_end = line("'>")
+
+                let l:lines = []
+                while l:current_line <= l:line_end
+                    let l:line = getline(l:current_line)
+                    call add(l:lines, l:line)
+                    let l:current_line = l:current_line + 1
+                endwhile
+
+                call writefile(l:lines, "/tmp/.tmp.lines")
+
+                call inputsave()
+                let l:prompt = input("prompt> ")
+                call inputrestore()
+
+                if empty(l:prompt)
+                    return
+                endif
+
+                let l:command = "python /home/s/github/cai/cai.py -a prompt "
+                let l:command = l:command."--prompt "."\"".l:prompt."\" "
+                let l:command = l:command."--file "."\"/tmp/.tmp.lines\" "
+                let l:command = l:command."--codebase "
 
                 " echom l:command
                 call TerminalLaunch(l:command, "silent! normal!", 2, 1, 1)
