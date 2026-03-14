@@ -224,8 +224,12 @@
 
         let mapleader = "\<space>"  " set leader as space
 
-        " -- AiChat
-            vnoremap <silent> <leader>a :<C-u>call <SID>AiChatLaunch()<CR>
+        " -- Cai
+
+            noremap <silent> <leader>a :<C-u>call <SID>CaiLaunch1()<CR>
+            vnoremap <silent> <leader>a :<C-u>call <SID>CaiLaunch2()<CR>
+            noremap <silent> <leader>A :<C-u>call <SID>CaiLaunch3()<CR>
+            vnoremap <silent> <leader>A :<C-u>call <SID>CaiLaunch4()<CR>
 
         " -- Trailing Whitespace
 
@@ -460,6 +464,102 @@
                     normal G
                 endif
 
+            endfunction
+
+        " --- Cai ---
+
+            function! s:CaiLaunch1()
+                call inputsave()
+                let l:prompt = input("prompt> ")
+                call inputrestore()
+
+                if empty(l:prompt)
+                    return
+                endif
+
+                let l:command = "cai "
+                let l:command = l:command."--prompt "."\"".l:prompt."\" "
+                let l:command = l:command."--location "."\"".expand('%:p').":".line('.').":".col('.')."\" "
+
+                " echom l:command
+                call TerminalLaunch(l:command, "silent! normal!", 2, 1, 1)
+            endfunction
+
+            function! s:CaiLaunch2()
+                let l:current_line = line("'<")
+                let l:line_end = line("'>")
+
+                let l:lines = []
+                while l:current_line <= l:line_end
+                    let l:line = getline(l:current_line)
+                    call add(l:lines, l:line)
+                    let l:current_line = l:current_line + 1
+                endwhile
+
+                call writefile(l:lines, "/tmp/.tmp.lines")
+
+                call inputsave()
+                let l:prompt = input("prompt> ")
+                call inputrestore()
+
+                if empty(l:prompt)
+                    return
+                endif
+
+                let l:command = "cai "
+                let l:command = l:command."--prompt "."\"".l:prompt."\" "
+                let l:command = l:command."--file "."\"/tmp/.tmp.lines\" "
+
+                " echom l:command
+                call TerminalLaunch(l:command, "silent! normal!", 2, 1, 1)
+            endfunction
+
+            function! s:CaiLaunch3()
+                call inputsave()
+                let l:prompt = input("prompt> ")
+                call inputrestore()
+
+                if empty(l:prompt)
+                    return
+                endif
+
+                let l:command = "cai "
+                let l:command = l:command."--prompt "."\"".l:prompt."\" "
+                let l:command = l:command."--location "."\"".expand('%:p').":".line('.').":".col('.')."\" "
+                let l:command = l:command."--codebase "
+
+                " echom l:command
+                call TerminalLaunch(l:command, "silent! normal!", 2, 1, 1)
+            endfunction
+
+            function! s:CaiLaunch4()
+                let l:current_line = line("'<")
+                let l:line_end = line("'>")
+
+                let l:lines = []
+                while l:current_line <= l:line_end
+                    let l:line = getline(l:current_line)
+                    call add(l:lines, l:line)
+                    let l:current_line = l:current_line + 1
+                endwhile
+
+                call writefile(l:lines, "/tmp/.tmp.lines")
+
+                call inputsave()
+                let l:prompt = input("prompt> ")
+                call inputrestore()
+
+                if empty(l:prompt)
+                    return
+                endif
+
+                let l:command = "cai "
+                let l:command = l:command."--prompt "."\"".l:prompt."\" "
+                let l:command = l:command."--file "."\"/tmp/.tmp.lines\" "
+                let l:command = l:command."--codebase "
+
+                " echom l:command
+                call TerminalLaunch(l:command, "silent! normal!", 2, 1, 1)
             endfunction
 
         " --- Aichat ---
