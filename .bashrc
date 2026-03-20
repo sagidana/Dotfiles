@@ -6,7 +6,7 @@
 [[ $- != *i* ]] && return
 
 alias ls='ls --color=auto'
-alias ll='ls -lah'
+alias ll='ls -lh'
 
 # Prompt format
 PS1='[\u@\h \W]\$ '
