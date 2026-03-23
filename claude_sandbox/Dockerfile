@@ -58,7 +58,7 @@ USER node
 
 # Default command
 
-# CMD ["/bin/bash"]
+CMD ["/bin/bash"]
 
-ENTRYPOINT ["claude"]
-CMD ["--dangerously-skip-permissions"]
+# ENTRYPOINT ["claude"]
+# CMD ["--dangerously-skip-permissions"]
