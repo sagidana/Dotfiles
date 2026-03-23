@@ -14,8 +14,6 @@
 REPO="$1"
 
 docker run --rm -it \
-  --network space-inet-net \
-  --dns 192.168.1.1 \
   -e DISPLAY=$DISPLAY \
   -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY \
   -e XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \

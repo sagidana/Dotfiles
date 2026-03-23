@@ -36,16 +36,16 @@ RUN pip3 install --upgrade pip --break-system-package
 # network tools
 RUN apt update && apt install -y iputils-ping net-tools
 
-# Install Claude Code
-ARG CACHE_BUST=1
-RUN npm install -g npm@latest
-RUN npm install -g @anthropic-ai/claude-code
-
 # Install Playwright MCP server
 RUN npm install -g @executeautomation/playwright-mcp-server
 
 # Install Playwright browsers (Chrome)
 RUN npx playwright install chrome
+
+# Install Claude Code
+ARG CACHE_BUST=1
+RUN npm install -g npm@latest
+RUN npm install -g @anthropic-ai/claude-code
 
 
 # Create working directories
