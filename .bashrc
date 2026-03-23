@@ -2,14 +2,13 @@
 # ~/.bashrc
 #
 
+set -o vi
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-alias ls='ls --color=auto'
-alias ll='ls -lah'
-
 # Prompt format
-PS1='[\u@\h \W]\$ '
+PS1='[\u@\h \W]\n\$ '
 
 # -------------------------------------------------------------------------------
 # EDITOR
@@ -121,10 +120,26 @@ com_doc()
     READLINE_POINT=${#READLINE_LINE}
 }
 bind -x '"\C-o":com_doc'
+knowit_browse()
+{
+    python /root/projects/knowit/knowit.py -a browse
+}
+bind -x '"\C-k":knowit_browse'
 # -------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------
 # PATH manipulations
 # -------------------------------------------------------------------------------
 export PATH=~/scripts/:$PATH
+export PATH=~/.local/bin/:$PATH
 # -------------------------------------------------------------------------------
+#
+# -------------------------------------------------------------------------------
+# aliases
+# -------------------------------------------------------------------------------
+alias ls='ls --color=auto'
+alias ll='ls -lah'
+alias knowit='python ~/github/knowit/knowit.py'
+# -------------------------------------------------------------------------------
+#
+export PYTHONDONTWRITEBYTECODE=1

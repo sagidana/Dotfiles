@@ -138,7 +138,7 @@ export PATH=~/.local/bin/:$PATH
 # aliases
 # -------------------------------------------------------------------------------
 alias ls='ls --color=auto'
-alias ll='ls -lah'
+alias ll='ls -lh'
 alias knowit='python ~/github/knowit/knowit.py'
 # -------------------------------------------------------------------------------
 #
